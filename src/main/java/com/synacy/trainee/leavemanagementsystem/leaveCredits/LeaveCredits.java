@@ -19,8 +19,16 @@ public class LeaveCredits {
     private User user;
 
     @Column(nullable = false)
-    private Integer totalLeaveCredits;
+    private Integer vacationLeaveCredits;
 
     @Column(nullable = false)
-    private Integer remainingLeaveCredits;
+    private Integer sickLeaveCredits;
+
+    @Column(nullable = false)
+    private Integer emergencyLeaveCredits;
+
+    @Transient
+    public int getTotalLeaveCredits() {
+        return vacationLeaveCredits + sickLeaveCredits + emergencyLeaveCredits;
+    }
 }
