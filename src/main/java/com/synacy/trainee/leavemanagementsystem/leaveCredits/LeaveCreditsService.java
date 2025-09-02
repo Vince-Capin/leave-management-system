@@ -21,14 +21,13 @@ public class LeaveCreditsService {
         LeaveCredits leaveCredits = new LeaveCredits();
 
         leaveCredits.setUser(user);
-        leaveCredits.setVacationLeaveCredits(userRequest.vacationLeaveCredits());
-        leaveCredits.setSickLeaveCredits(userRequest.sickLeaveCredits());
-        leaveCredits.setEmergencyLeaveCredits(userRequest.emergencyLeaveCredits());
+        leaveCredits.setTotalLeaveCredits(userRequest.leaveCredits());
+        leaveCredits.setRemainingLeaveCredits(userRequest.leaveCredits());
 
         leaveCreditsRepository.save(leaveCredits);
     }
 
-    public Optional<LeaveCredits> getLeaveCreditsOfUsers (User user) {
+    public Optional<LeaveCredits> getLeaveCreditsOfUser(User user) {
         return leaveCreditsRepository.findByUser(user);
     }
 }
