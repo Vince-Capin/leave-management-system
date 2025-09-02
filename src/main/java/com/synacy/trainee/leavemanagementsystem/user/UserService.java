@@ -28,12 +28,21 @@ public class UserService {
         User savedUser = userRepository.save(user);
 
         if (userRequest.role() != UserRole.HR) {
-            leaveCreditsService.setLeaveCreditsForNewUsers(user, userRequest.leaveCredits()); }
+            leaveCreditsService.setLeaveCreditsForNewUsers(user, userRequest); }
 
         return savedUser;
     }
 
     public User fetchManagerById(Long id) {
         return userRepository.findById(id).orElse(null);
+    }
+
+    public void createInitialAdmin() {
+        User user = new User();
+
+        user.setName("HR");
+        user.setRole(UserRole.HR);
+
+        userRepository.save(user);
     }
 }

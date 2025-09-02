@@ -5,7 +5,9 @@ import org.antlr.v4.runtime.misc.NotNull;
 public record UserRequestDTO(
         @NotNull String name,
         @NotNull UserRole role,
-        Integer leaveCredits,
+        Integer vacationLeaveCredits,
+        Integer sickLeaveCredits,
+        Integer emergencyLeaveCredits,
         Long managerId
         ) {
 }
