@@ -27,7 +27,6 @@ public class LeaveApplicationService {
         LeaveApplication leave = new LeaveApplication();
 
         leave.setApplicant(user);
-        leave.setLeaveType(leaveRequest.getLeaveType());
         leave.setStartDate(leaveRequest.getStartDate());
         leave.setEndDate(leaveRequest.getEndDate());
         leave.setReason(leaveRequest.getReason());
@@ -37,8 +36,11 @@ public class LeaveApplicationService {
         return leaveApplicationRepository.save(leave);
     }
 
-    public LeaveApplication fetchAllLeaveApplications() {
+    public List<LeaveResponse> fetchAllLeaveApplications() {
         List<LeaveApplication> leaveApplications = leaveApplicationRepository.findAll();
-        return (LeaveApplication) leaveApplications;
+
+        return leaveApplications.stream()
+                .map(LeaveResponse::new)
+                .toList();
     }
 }

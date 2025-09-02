@@ -9,7 +9,6 @@ import java.time.LocalDate;
 @Getter
 public class LeaveRequest {
     private Long userId;
-    private LeaveType leaveType;
     private LocalDate startDate;
     private LocalDate endDate;
     private double numberOfDays;
