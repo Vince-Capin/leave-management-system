@@ -5,6 +5,7 @@ import com.synacy.trainee.leavemanagementsystem.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 
@@ -26,12 +27,12 @@ public class LeaveApplication {
     @JoinColumn(name = "manager_id")
     private User manager;
 
-    @Column
+    @Column(nullable = false)
     private LocalDate startDate;
-    @Column
+    @Column(nullable = false)
     private LocalDate endDate;
-    @Column
-    private LocalDate appliedDate = LocalDate.now();
+    @CreationTimestamp
+    private LocalDate appliedDate;
     @Column
     private double numberOfDays;
 
