@@ -23,7 +23,7 @@ public class UserController {
     @PostMapping("/api/v1/user")
     public UserResponseDTO addUser(@RequestBody UserRequestDTO userRequest){
         User user = userService.createUser(userRequest);
-        LeaveCredits leaveCredits = leaveCreditsService.getLeaveCreditsOfUsers(user).get();
+        LeaveCredits leaveCredits = leaveCreditsService.getLeaveCreditsOfUser(user).get();
 
         return new UserResponseDTO(user, leaveCredits);
     }
@@ -31,7 +31,7 @@ public class UserController {
     @PutMapping("/api/v1/user/{id}")
     public UserResponseDTO updateUser(@PathVariable Long id, @RequestBody UserRequestDTO userRequest){
         User user = userService.updateUser(id, userRequest);
-        LeaveCredits leaveCredits = leaveCreditsService.getLeaveCreditsOfUsers(user).get();
+        LeaveCredits leaveCredits = leaveCreditsService.getLeaveCreditsOfUser(user).get();
 
         return new UserResponseDTO(user, leaveCredits);
     }
