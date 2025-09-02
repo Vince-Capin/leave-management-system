@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @Getter
 public class LeaveResponse {
     private final String name;
-    private final LeaveType leaveType;
+    private final LocalDate dateApplied;
     private final LocalDate startDate;
     private final LocalDate endDate;
     private final double numberOfDays;
@@ -17,7 +17,7 @@ public class LeaveResponse {
 
     public LeaveResponse(LeaveApplication leaveApplication) {
         this.name = leaveApplication.getApplicant().getName();
-        this.leaveType = leaveApplication.getLeaveType();
+        this.dateApplied = leaveApplication.getAppliedDate();
         this.startDate = leaveApplication.getStartDate();
         this.endDate = leaveApplication.getEndDate();
         this.numberOfDays = leaveApplication.getNumberOfDays();

@@ -22,6 +22,10 @@ public class LeaveApplication {
     @JoinColumn(name = "user_id")
     private User applicant;
 
+    @ManyToOne
+    @JoinColumn(name = "manager_id")
+    private User manager;
+
     @Column
     private LocalDate startDate;
     @Column
@@ -30,9 +34,6 @@ public class LeaveApplication {
     private LocalDate appliedDate = LocalDate.now();
     @Column
     private double numberOfDays;
-
-    @Enumerated(EnumType.STRING)
-    private LeaveType leaveType;
 
     @Column
     private String reason;
