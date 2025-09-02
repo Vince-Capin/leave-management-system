@@ -4,10 +4,7 @@ import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCredits;
 import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCreditsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserController {
@@ -19,13 +16,21 @@ public class UserController {
     public UserController(UserService userService, LeaveCreditsService leaveCreditsService) {
         this.userService = userService;
         this.leaveCreditsService = leaveCreditsService;
-        userService.createInitialAdmin();
+        userService.createInitialUsers();
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/api/v1/user")
     public UserResponseDTO addUser(@RequestBody UserRequestDTO userRequest){
         User user = userService.createUser(userRequest);
+        LeaveCredits leaveCredits = leaveCreditsService.getLeaveCreditsOfUsers(user).get();
+
+        return new UserResponseDTO(user, leaveCredits);
+    }
+
+    @PutMapping("/api/v1/user/{id}")
+    public UserResponseDTO updateUser(@PathVariable Long id, @RequestBody UserRequestDTO userRequest){
+        User user = userService.updateUser(id, userRequest);
         LeaveCredits leaveCredits = leaveCreditsService.getLeaveCreditsOfUsers(user).get();
 
         return new UserResponseDTO(user, leaveCredits);
