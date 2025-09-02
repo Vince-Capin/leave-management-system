@@ -5,6 +5,7 @@ import com.synacy.trainee.leavemanagementsystem.user.User;
 import com.synacy.trainee.leavemanagementsystem.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class LeaveApplicationService {
         this.leaveApplicationRepository = leaveApplicationRepository;
     }
 
+    @Transactional
     public LeaveApplication createLeaveApplication(LeaveRequest leaveRequest) {
 
         User user = userRepository.findById(leaveRequest.getUserId())
