@@ -38,6 +38,14 @@ public class LeaveApplicationService {
         return leaveApplicationRepository.save(leave);
     }
 
+    public LeaveApplication updateLeaveStatus(Long leaveId, LeaveStatus status) {
+        LeaveApplication leave = leaveApplicationRepository.findById(leaveId)
+                .orElseThrow(() -> new IllegalArgumentException("Leave application not found with id: " + leaveId));
+
+        leave.setStatus(status);
+        return leaveApplicationRepository.save(leave);
+    }
+
     public List<LeaveResponse> fetchAllLeaveApplications() {
         List<LeaveApplication> leaveApplications = leaveApplicationRepository.findAll();
 

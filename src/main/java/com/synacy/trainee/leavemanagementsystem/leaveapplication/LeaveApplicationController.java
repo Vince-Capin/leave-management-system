@@ -1,10 +1,7 @@
 package com.synacy.trainee.leavemanagementsystem.leaveapplication;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,5 +25,12 @@ public class LeaveApplicationController {
     public List<LeaveResponse> fetchAllLeaveApplications() {
         return leaveApplicationService.fetchAllLeaveApplications();
     }
+
+    @PutMapping("/api/v1/leave/application/{id}/status")
+    public LeaveResponse updateLeaveApplicationStatus(@PathVariable Long id, @RequestParam LeaveStatus leaveStatus) {
+        LeaveApplication updateLeave = leaveApplicationService.updateLeaveStatus(id, leaveStatus);
+        return new LeaveResponse(updateLeave);
+    }
+
 
 }
