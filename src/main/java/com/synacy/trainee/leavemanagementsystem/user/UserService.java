@@ -25,11 +25,12 @@ public class UserService {
 
     public User createUser(UserRequestDTO userRequest) {
         User user = new User();
-
         User savedUser = saveUser(userRequest, user);
 
         if (savedUser.getRole() != UserRole.HR && userRequest.leaveCredits() != null) {
-            leaveCreditsService.setLeaveCreditsForNewUsers(savedUser, userRequest); }
+            LeaveCredits leaveCredits = leaveCreditsService.setLeaveCreditsForNewUsers(savedUser, userRequest);
+            savedUser.setLeaveCredits(leaveCredits);
+        }
 
         return savedUser;
     }
@@ -51,10 +52,11 @@ public class UserService {
     public User updateUser(Long id, UserRequestDTO userRequest) {
         User user = getUserById(id).get();
 
-        LeaveCredits leaveCredits = leaveCreditsService.getLeaveCreditsOfUser(user).get();
-
-        leaveCredits.setTotalLeaveCredits(userRequest.leaveCredits());
-        leaveCredits.setRemainingLeaveCredits(userRequest.leaveCredits());
+        if (user.getRole() != UserRole.HR && userRequest.leaveCredits() != null) {
+            LeaveCredits leaveCredits = leaveCreditsService.getLeaveCreditsOfUser(user).get();
+            leaveCredits.setTotalLeaveCredits(userRequest.leaveCredits());
+            leaveCredits.setRemainingLeaveCredits(userRequest.leaveCredits());
+        }
 
         return saveUser(userRequest, user);
     }
