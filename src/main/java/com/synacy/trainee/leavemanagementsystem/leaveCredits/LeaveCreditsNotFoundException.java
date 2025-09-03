@@ -1,4 +1,4 @@
-package com.synacy.trainee.leavemanagementsystem.leaveapplication;
+package com.synacy.trainee.leavemanagementsystem.leaveCredits;
 
 public class LeaveCreditsNotFoundException extends RuntimeException {
     public LeaveCreditsNotFoundException(String message) {

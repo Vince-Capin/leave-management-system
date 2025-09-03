@@ -1,6 +1,5 @@
 package com.synacy.trainee.leavemanagementsystem.leaveCredits;
 
-import com.synacy.trainee.leavemanagementsystem.leaveapplication.LeaveCreditsNotFoundException;
 import com.synacy.trainee.leavemanagementsystem.user.User;
 import com.synacy.trainee.leavemanagementsystem.user.UserRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;

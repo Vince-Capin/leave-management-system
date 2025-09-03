@@ -1,6 +1,6 @@
 package com.synacy.trainee.leavemanagementsystem.web.apierror;
 
-import com.synacy.trainee.leavemanagementsystem.leaveapplication.LeaveCreditsNotFoundException;
+import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCreditsNotFoundException;
 import com.synacy.trainee.leavemanagementsystem.user.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
