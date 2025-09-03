@@ -7,6 +7,7 @@ import com.synacy.trainee.leavemanagementsystem.web.apierror.InvalidOperationExc
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -84,6 +85,10 @@ public class UserService {
         return userRepository.existsByName(name);
     }
 
+    public List<User> fetchAllManagers() {
+        return userRepository.findAllByRole(UserRole.MANAGER);
+    }
+
     //for testing purposes
     public void createInitialUsers() {
         User user1 = new User();
@@ -115,4 +120,6 @@ public class UserService {
         leaveCreditsRepository.save(leaveCredits2);
         leaveCreditsRepository.save(leaveCredits3);
     }
+
+
 }
