@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class UserController {
 
@@ -28,6 +30,15 @@ public class UserController {
         User user = userService.updateUser(id, userRequest);
 
         return new UserResponseDTO(user);
+    }
+
+    @GetMapping("/api/v1/user/managers")
+    public List<UserManagerResponseDTO> getAllManagers() {
+        List<User> managers = userService.fetchAllManagers();
+
+        return managers.stream()
+                .map(UserManagerResponseDTO::new)
+                .toList();
     }
 
 }
