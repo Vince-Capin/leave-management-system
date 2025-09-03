@@ -3,6 +3,7 @@ package com.synacy.trainee.leavemanagementsystem.user;
 import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCredits;
 import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCreditsRepository;
 import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCreditsService;
+import com.synacy.trainee.leavemanagementsystem.web.apierror.InvalidOperationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,12 @@ public class UserService {
     }
 
     public User createUser(UserRequestDTO userRequest) {
+        if (checkForSameUserName(userRequest.name())) {
+            throw new InvalidOperationException(
+                    "SAME_USER_NAME", "Same user name already exists"
+            );
+        }
+
         User user = new User();
         User savedUser = saveUser(userRequest, user);
 
@@ -40,20 +47,30 @@ public class UserService {
         user.setRole(userRequest.role());
 
         if (userRequest.managerId() != null) {
-            user.setManager(fetchManagerById(userRequest.managerId())); }
+            User manager = fetchManagerById(userRequest.managerId())
+                    .orElseThrow(() -> new UserNotFoundException("Manager not found"));
+            user.setManager(manager);
+        }
 
         return userRepository.save(user);
     }
 
-    public User fetchManagerById(Long id) {
-        return userRepository.findById(id).orElse(null);
+    public Optional<User> fetchManagerById(Long id) {
+        return userRepository.findById(id);
     }
 
     public User updateUser(Long id, UserRequestDTO userRequest) {
-        User user = getUserById(id).get();
+        if (checkForSameUserName(userRequest.name())) {
+            throw new InvalidOperationException(
+                    "SAME_USER_NAME", "Same user name already exists"
+            );
+        }
+
+        User user = getUserById(id)
+                .orElseThrow(() -> new UserNotFoundException(String.format("User with id %d not found", id)));
 
         if (user.getRole() != UserRole.HR && userRequest.leaveCredits() != null) {
-            LeaveCredits leaveCredits = leaveCreditsService.getLeaveCreditsOfUser(user).get();
+            LeaveCredits leaveCredits = leaveCreditsService.getLeaveCreditsOfUser(user);
             leaveCredits.setTotalLeaveCredits(userRequest.leaveCredits());
             leaveCredits.setRemainingLeaveCredits(userRequest.leaveCredits());
         }
@@ -61,8 +78,10 @@ public class UserService {
         return saveUser(userRequest, user);
     }
 
-    public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
+    public Optional<User> getUserById(Long id) { return userRepository.findById(id); }
+
+    public boolean checkForSameUserName (String name) {
+        return userRepository.existsByName(name);
     }
 
     //for testing purposes
