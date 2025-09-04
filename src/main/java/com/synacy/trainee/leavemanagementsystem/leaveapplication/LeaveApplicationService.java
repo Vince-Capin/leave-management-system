@@ -55,7 +55,6 @@ public class LeaveApplicationService {
         LeaveStatus previousStatus = leave.getStatus();
         leave.setStatus(status);
 
-        // Only modify leave credits if the status is actually changing
         if (!previousStatus.equals(status)) {
             LeaveCredits leaveCredits = leaveCreditsService.getLeaveCreditsOfUser(leave.getApplicant());
             leaveCreditsModifier.modifyLeaveCredits(leave, status, leaveCredits);

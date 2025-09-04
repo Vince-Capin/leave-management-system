@@ -8,12 +8,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class LeaveCreditsModifier {
-    private final LeaveApplicationRepository leaveApplicationRepository;
     private final LeaveCreditsRepository leaveCreditsRepository;
 
-    public LeaveCreditsModifier(LeaveApplicationRepository leaveApplicationRepository,
-                                LeaveCreditsRepository leaveCreditsRepository) {
-        this.leaveApplicationRepository = leaveApplicationRepository;
+    public LeaveCreditsModifier(LeaveCreditsRepository leaveCreditsRepository) {
         this.leaveCreditsRepository = leaveCreditsRepository;
     }
 
