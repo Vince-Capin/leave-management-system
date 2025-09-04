@@ -1,7 +1,6 @@
 package com.synacy.trainee.leavemanagementsystem.leaveCredits;
 
 import com.synacy.trainee.leavemanagementsystem.leaveapplication.LeaveApplication;
-import com.synacy.trainee.leavemanagementsystem.leaveapplication.LeaveApplicationRepository;
 import com.synacy.trainee.leavemanagementsystem.leaveapplication.LeaveStatus;
 import org.springframework.stereotype.Service;
 
