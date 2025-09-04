@@ -32,5 +32,10 @@ public class LeaveApplicationController {
         return new LeaveResponse(updateLeave);
     }
 
-
+    @GetMapping("/api/v1/users/{userId}/leave-applications")
+    public List<LeaveResponse> getUserLeaveApplications(@PathVariable Long userId) {
+        return leaveApplicationService.getLeaveApplicationsByUserId(userId).stream()
+                .map(LeaveResponse::new)
+                .toList();
+    }
 }
