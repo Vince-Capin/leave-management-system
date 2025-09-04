@@ -14,7 +14,7 @@ class LeaveCreditsModifierSpec extends Specification {
         leaveCreditsModifier = new LeaveCreditsModifier(leaveCreditsRepository)
     }
 
-    def "creditsModifier() should decrease leave credits and save when status is APPROVED"() {
+    def "modifyLeaveCredits() should decrease leave credits and save when status is APPROVED"() {
         given:
         LeaveApplication leaveApplication = Mock(LeaveApplication)
         LeaveCredits leaveCredits = Mock(LeaveCredits)
