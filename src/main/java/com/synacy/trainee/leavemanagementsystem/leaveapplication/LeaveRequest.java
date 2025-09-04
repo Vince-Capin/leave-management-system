@@ -13,6 +13,6 @@ public class LeaveRequest {
     private Long userId;
     private LocalDate startDate;
     private LocalDate endDate;
-    private double numberOfDays;
+    private int numberOfDays;
     private String reason;
 }

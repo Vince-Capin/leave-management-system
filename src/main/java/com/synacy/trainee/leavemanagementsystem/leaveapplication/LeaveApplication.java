@@ -34,7 +34,7 @@ public class LeaveApplication {
     @CreationTimestamp
     private LocalDate appliedDate;
     @Column
-    private double numberOfDays;
+    private Integer numberOfDays;
 
     @Column
     private String reason;

@@ -23,4 +23,15 @@ public class LeaveCredits {
 
     @Column(nullable = false)
     private Integer remainingLeaveCredits;
+
+    public void decreaseCredits(int numberOfDays) {
+        this.remainingLeaveCredits -= numberOfDays;
+    }
+
+    public void increaseCredits(int numberOfDays) {
+        this.remainingLeaveCredits += numberOfDays;
+    }
 }
+
+
+

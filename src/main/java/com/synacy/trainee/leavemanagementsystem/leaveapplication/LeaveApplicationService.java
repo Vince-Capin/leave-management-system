@@ -1,6 +1,9 @@
 package com.synacy.trainee.leavemanagementsystem.leaveapplication;
 
 
+import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCredits;
+import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCreditsModifier;
+import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCreditsService;
 import com.synacy.trainee.leavemanagementsystem.user.User;
 import com.synacy.trainee.leavemanagementsystem.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +16,16 @@ import java.util.List;
 public class LeaveApplicationService {
     private final UserRepository userRepository;
     private final LeaveApplicationRepository leaveApplicationRepository;
+    private final LeaveCreditsModifier leaveCreditsModifier;
+    private final LeaveCreditsService leaveCreditsService;
 
     @Autowired
-    public LeaveApplicationService (LeaveApplicationRepository leaveApplicationRepository, UserRepository userRepository) {
+    public LeaveApplicationService (LeaveApplicationRepository leaveApplicationRepository,
+                                    UserRepository userRepository,
+                                    LeaveCreditsModifier leaveCreditsModifier,
+                                    LeaveCreditsService leaveCreditsService) {
+        this.leaveCreditsService = leaveCreditsService;
+        this.leaveCreditsModifier = leaveCreditsModifier;
         this.userRepository = userRepository;
         this.leaveApplicationRepository = leaveApplicationRepository;
     }
@@ -42,7 +52,14 @@ public class LeaveApplicationService {
         LeaveApplication leave = leaveApplicationRepository.findById(leaveId)
                 .orElseThrow(() -> new IllegalArgumentException("Leave application not found with id: " + leaveId));
 
+        LeaveStatus previousStatus = leave.getStatus();
         leave.setStatus(status);
+
+        if (!previousStatus.equals(status)) {
+            LeaveCredits leaveCredits = leaveCreditsService.getLeaveCreditsOfUser(leave.getApplicant());
+            leaveCreditsModifier.modifyLeaveCredits(leave, status, leaveCredits);
+        }
+
         return leaveApplicationRepository.save(leave);
     }
 
