@@ -40,6 +40,14 @@ public class UserController {
                     .toList();
     }
 
+    @GetMapping("/api/v1/user/{id}")
+    public UserResponseDTO getUserById(@PathVariable Long id) {
+        User user = userService.getUserById(id)
+                .orElseThrow(() -> new UserNotFoundException(String.format("User with id %d not found!", id)));
+
+        return new UserResponseDTO(user);
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/api/v1/user")
     public UserResponseDTO addUser(@RequestBody UserRequestDTO userRequest){

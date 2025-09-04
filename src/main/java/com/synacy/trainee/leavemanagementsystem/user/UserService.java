@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,7 +33,7 @@ public class UserService {
     }
 
     public User createUser(UserRequestDTO userRequest) {
-        if (checkForSameUserName(userRequest.name())) {
+        if (checkForSameUserName(userRequest.name(), null)) {
             throw new InvalidOperationException(
                     "SAME_USER_NAME", "Same user name already exists"
             );
@@ -75,14 +74,14 @@ public class UserService {
     }
 
     public User updateUser(Long id, UserRequestDTO userRequest) {
-        if (checkForSameUserName(userRequest.name())) {
+        if (checkForSameUserName(userRequest.name(), id)) {
             throw new InvalidOperationException(
                     "SAME_USER_NAME", "Same user name already exists"
             );
         }
 
         User user = getUserById(id)
-                .orElseThrow(() -> new UserNotFoundException(String.format("User with id %d not found", id)));
+                .orElseThrow(() -> new UserNotFoundException(String.format("User with id %d not found!", id)));
 
         if (user.getRole() != UserRole.HR && userRequest.leaveCredits() != null) {
             LeaveCredits leaveCredits = leaveCreditsService.getLeaveCreditsOfUser(user);
@@ -95,8 +94,12 @@ public class UserService {
 
     public Optional<User> getUserById(Long id) { return userRepository.findById(id); }
 
-    public boolean checkForSameUserName (String name) {
-        return userRepository.existsByName(name);
+    public boolean checkForSameUserName (String name, Long id) {
+        if (id == null) {
+            return userRepository.existsByName(name);
+        }
+
+        return userRepository.existsByNameIgnoreCaseAndIdNot(name, id);
     }
 
     public List<User> fetchAllManagers() {
