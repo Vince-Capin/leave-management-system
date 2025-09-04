@@ -53,4 +53,8 @@ public class LeaveApplicationService {
                 .map(LeaveResponse::new)
                 .toList();
     }
+
+    public List<LeaveApplication> getLeaveApplicationsByUserId(Long userId) {
+        return leaveApplicationRepository.findByApplicant_Id(userId);
+    }
 }
