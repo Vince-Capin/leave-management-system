@@ -5,6 +5,10 @@ import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCreditsReposit
 import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCreditsService;
 import com.synacy.trainee.leavemanagementsystem.web.apierror.InvalidOperationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +27,10 @@ public class UserService {
         this.userRepository = userRepository;
         this.leaveCreditsService = leaveCreditsService;
         this.leaveCreditsRepository = leaveCreditsRepository;
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
     public User createUser(UserRequestDTO userRequest) {
@@ -56,8 +64,14 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public Page<User> getUsers(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return userRepository.findAll(pageable);
+    }
+  
     public Optional<User> fetchManagerById(Long id) {
         return userRepository.findById(id);
+
     }
 
     public User updateUser(Long id, UserRequestDTO userRequest) {
