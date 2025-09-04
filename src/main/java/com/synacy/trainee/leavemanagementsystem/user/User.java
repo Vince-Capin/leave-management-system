@@ -1,5 +1,6 @@
 package com.synacy.trainee.leavemanagementsystem.user;
 
+import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCredits;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,4 +29,6 @@ public class User {
     @JoinColumn(name = "manager_id")
     private User manager;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private LeaveCredits leaveCredits;
 }

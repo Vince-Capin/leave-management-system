@@ -3,6 +3,7 @@ package com.synacy.trainee.leavemanagementsystem.user;
 import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCredits;
 import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCreditsService;
 import com.synacy.trainee.leavemanagementsystem.web.PageResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,12 +19,10 @@ import java.util.stream.Collector;
 public class UserController {
 
     private final UserService userService;
-    private final LeaveCreditsService leaveCreditsService;
 
     @Autowired
-    public UserController(UserService userService, LeaveCreditsService leaveCreditsService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.leaveCreditsService = leaveCreditsService;
         userService.createInitialUsers();
     }
 
@@ -53,16 +52,24 @@ public class UserController {
     @PostMapping("/api/v1/user")
     public UserResponseDTO addUser(@RequestBody UserRequestDTO userRequest){
         User user = userService.createUser(userRequest);
-        LeaveCredits leaveCredits = leaveCreditsService.getLeaveCreditsOfUser(user).get();
 
-        return new UserResponseDTO(user, leaveCredits);
+        return new UserResponseDTO(user);
     }
 
     @PutMapping("/api/v1/user/{id}")
     public UserResponseDTO updateUser(@PathVariable Long id, @RequestBody UserRequestDTO userRequest){
         User user = userService.updateUser(id, userRequest);
-        LeaveCredits leaveCredits = leaveCreditsService.getLeaveCreditsOfUser(user).get();
 
-        return new UserResponseDTO(user, leaveCredits);
+        return new UserResponseDTO(user);
     }
+
+    @GetMapping("/api/v1/user/managers")
+    public List<UserManagerResponseDTO> getAllManagers() {
+        List<User> managers = userService.fetchAllManagers();
+
+        return managers.stream()
+                .map(UserManagerResponseDTO::new)
+                .toList();
+    }
+
 }

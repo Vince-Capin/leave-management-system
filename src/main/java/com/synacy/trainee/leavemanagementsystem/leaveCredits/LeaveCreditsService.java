@@ -5,8 +5,6 @@ import com.synacy.trainee.leavemanagementsystem.user.UserRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class LeaveCreditsService {
 
@@ -17,17 +15,20 @@ public class LeaveCreditsService {
         this.leaveCreditsRepository = leaveCreditsRepository;
     }
 
-    public void setLeaveCreditsForNewUsers (User user, UserRequestDTO userRequest) {
+    public LeaveCredits setLeaveCreditsForNewUsers (User user, UserRequestDTO userRequest) {
         LeaveCredits leaveCredits = new LeaveCredits();
 
         leaveCredits.setUser(user);
         leaveCredits.setTotalLeaveCredits(userRequest.leaveCredits());
         leaveCredits.setRemainingLeaveCredits(userRequest.leaveCredits());
 
-        leaveCreditsRepository.save(leaveCredits);
+        return leaveCreditsRepository.save(leaveCredits);
     }
 
-    public Optional<LeaveCredits> getLeaveCreditsOfUser(User user) {
-        return leaveCreditsRepository.findByUser(user);
+    public LeaveCredits getLeaveCreditsOfUser(User user) {
+        return leaveCreditsRepository.findByUser(user)
+                .orElseThrow(() -> new LeaveCreditsNotFoundException(
+                                "Leave credits for user %d not found".formatted(user.getId()))
+                );
     }
 }
