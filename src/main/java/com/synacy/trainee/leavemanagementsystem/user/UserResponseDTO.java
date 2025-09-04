@@ -17,8 +17,8 @@ public class UserResponseDTO {
         this.id = user.getId();
         this.name = user.getName();
         this.role = user.getRole();
-        this.totalLeaveCredits = leaveCredits.getTotalLeaveCredits();
-        this.remainingLeaveCredits = leaveCredits.getRemainingLeaveCredits();
+        this.totalLeaveCredits = (leaveCredits != null) ? leaveCredits.getTotalLeaveCredits() : null;
+        this.remainingLeaveCredits = (leaveCredits != null) ? leaveCredits.getRemainingLeaveCredits() : null;
         this.manager = user.getManager() != null ? user.getManager().getName() : null;
     }
 }
