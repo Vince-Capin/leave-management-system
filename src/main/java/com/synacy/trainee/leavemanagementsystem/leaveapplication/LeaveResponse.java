@@ -1,6 +1,5 @@
 package com.synacy.trainee.leavemanagementsystem.leaveapplication;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -14,6 +13,7 @@ public class LeaveResponse {
     private final double numberOfDays;
     private final String reason;
     private final LeaveStatus status;
+    private final String manager;
 
     public LeaveResponse(LeaveApplication leaveApplication) {
         this.name = leaveApplication.getApplicant().getName();
@@ -23,6 +23,7 @@ public class LeaveResponse {
         this.numberOfDays = leaveApplication.getNumberOfDays();
         this.reason = leaveApplication.getReason();
         this.status = leaveApplication.getStatus();
+        this.manager = leaveApplication.getManager() != null ? leaveApplication.getManager().getName() : null;
     }
 }
 
