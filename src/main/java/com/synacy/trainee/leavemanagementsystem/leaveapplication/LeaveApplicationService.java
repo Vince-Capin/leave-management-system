@@ -32,6 +32,7 @@ public class LeaveApplicationService {
 
     @Transactional
     public LeaveApplication createLeaveApplication(LeaveRequest leaveRequest) {
+        LeaveApplication leaveApplication = new LeaveApplication();
 
         User user = userRepository.findById(leaveRequest.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + leaveRequest.getUserId()));
@@ -39,6 +40,8 @@ public class LeaveApplicationService {
         LeaveApplication leave = new LeaveApplication();
 
         leave.setApplicant(user);
+        leave.setManager(user.getManager());
+        leave.setAppliedDate(leaveApplication.getAppliedDate());
         leave.setStartDate(leaveRequest.getStartDate());
         leave.setEndDate(leaveRequest.getEndDate());
         leave.setReason(leaveRequest.getReason());

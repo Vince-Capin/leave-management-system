@@ -32,7 +32,7 @@ public class LeaveApplication {
     @Column(nullable = false)
     private LocalDate endDate;
     @CreationTimestamp
-    private LocalDate appliedDate;
+    private LocalDate appliedDate = LocalDate.now();
     @Column
     private Integer numberOfDays;
 
