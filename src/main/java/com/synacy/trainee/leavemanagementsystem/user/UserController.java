@@ -20,7 +20,7 @@ public class UserController {
         userService.createInitialUsers();
     }
 
-    @GetMapping("/api/v1/users")
+    @GetMapping("/api/v1/users/paginated")
     public PageResponse<UserResponseDTO> getUsers(
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "5") int size) {
@@ -33,11 +33,13 @@ public class UserController {
         return new PageResponse<>((int) userPage.getTotalElements(), userPage.getNumber() + 1, userDTOs);
     }
 
-    @GetMapping("/api/v1/users/dropdown")
-    public List<UserDropdownDTO> getUsersForDropdown() {
-        return userService.getAllUsers().stream()
-                    .map(user -> new UserDropdownDTO(user.getId(), user.getName(), user.getRole()))
-                    .toList();
+    @GetMapping("/api/v1/users")
+    public List<UserResponseDTO> getAllUsers() {
+        List<User> users = userService.getAllUsers();
+
+        return users.stream()
+                .map(UserResponseDTO::new)
+                .toList();
     }
 
     @GetMapping("/api/v1/user/{id}")
