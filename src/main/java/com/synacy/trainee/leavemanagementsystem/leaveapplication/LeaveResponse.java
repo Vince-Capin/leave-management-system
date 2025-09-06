@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 @Getter
 public class LeaveResponse {
+    private final Long id;
     private final String name;
     private final LocalDate dateApplied;
     private final LocalDate startDate;
@@ -16,6 +17,7 @@ public class LeaveResponse {
     private final String manager;
 
     public LeaveResponse(LeaveApplication leaveApplication) {
+        this.id = leaveApplication.getId();
         this.name = leaveApplication.getApplicant().getName();
         this.dateApplied = leaveApplication.getAppliedDate();
         this.startDate = leaveApplication.getStartDate();
