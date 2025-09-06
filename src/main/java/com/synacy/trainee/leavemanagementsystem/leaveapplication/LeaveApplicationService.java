@@ -73,4 +73,8 @@ public class LeaveApplicationService {
     public List<LeaveApplication> getLeaveApplicationsByUserId(Long userId) {
         return leaveApplicationRepository.findByApplicant_Id(userId);
     }
+
+    public List<LeaveApplication> getLeaveApplicationsByManagerId(Long managerId) {
+        return leaveApplicationRepository.findLeaveApplicationByManager_Id(managerId);
+    }
 }

@@ -8,4 +8,6 @@ import java.util.List;
 @Repository
 public interface LeaveApplicationRepository extends JpaRepository<LeaveApplication, Long> {
     List<LeaveApplication> findByApplicant_Id(Long id);
+
+    List<LeaveApplication> findLeaveApplicationByManager_Id(Long managerId);
 }
