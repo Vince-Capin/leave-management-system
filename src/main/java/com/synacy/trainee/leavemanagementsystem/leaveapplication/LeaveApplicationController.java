@@ -38,4 +38,11 @@ public class LeaveApplicationController {
                 .map(LeaveResponse::new)
                 .toList();
     }
+
+    @GetMapping("api/v1/leave/applications/manager/{id}")
+    public List<LeaveResponse> getLeaveApplicationsByManagerId(@PathVariable Long id) {
+        return leaveApplicationService.getLeaveApplicationsByManagerId(id).stream()
+                .map(LeaveResponse::new)
+                .toList();
+    }
 }
