@@ -28,22 +28,6 @@ public class LeaveApplicationController {
         return leaveApplicationService.fetchAllLeaveApplications();
     }
 
-    @GetMapping("/api/v1/leave/application/admin/history")
-    public PageResponse<LeaveResponse> fetchAllNonPendingLeaveApplications(
-            @RequestParam (value = "page" , defaultValue = "1") int page,
-            @RequestParam (value = "max", defaultValue = "5") int max) {
-
-        Page<LeaveApplication> leave = leaveApplicationService.fetchAllNonPendingLeaveApplications(page, max);
-
-        List<LeaveResponse> leaveResponses = leave.getContent().stream()
-                .map(LeaveResponse::new)
-                .toList();
-
-        int totalLeaves = (int) leave.getTotalElements();
-
-        return new PageResponse<>(totalLeaves, page, leaveResponses);
-    }
-
     @GetMapping("/api/v1/leave/application/status")
     public PageResponse<LeaveResponse> fetchLeaveApplicationsByStatus(
             @RequestParam LeaveStatus status,
@@ -62,20 +46,22 @@ public class LeaveApplicationController {
         return new PageResponse<>(totalLeaves, page, leaveResponses);
     }
 
-    @GetMapping("api/v1/leave/applications/manager/{id}")
-    public PageResponse<LeaveResponse> getLeaveApplicationsByManagerId(
-            @PathVariable Long id,
+    @GetMapping("/api/v1/leave/application/{managerId}/status")
+    public PageResponse<LeaveResponse> fetchAllLeaveApplicationsByManagerIdAndStatus(
+            @PathVariable Long managerId,
             @RequestParam LeaveStatus status,
             @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "max", defaultValue = "5") int max) {
-        Page<LeaveApplication> leave = leaveApplicationService.getLeaveApplicationsByManagerIdAndStatus(id, status, page, max);
+            @RequestParam(value = "max", defaultValue = "5")  int max
+    ){
+        Page<LeaveApplication> leave = leaveApplicationService.getLeaveApplicationsByManagerIdAndStatus(managerId, status, page, max);
 
-        List<LeaveResponse> leaveResponses = leave.getContent().stream()
+        List<LeaveResponse> leavesResponses = leave.getContent().stream()
                 .map(LeaveResponse::new)
                 .toList();
+
         int totalLeaves = (int) leave.getTotalElements();
 
-        return new PageResponse<>(totalLeaves, page, leaveResponses);
+        return new PageResponse<>(totalLeaves, page, leavesResponses);
     }
 
     @PutMapping("/api/v1/leave/application/{id}/status")
