@@ -30,7 +30,9 @@ public class UserController {
                 .map(UserResponseDTO::new)
                 .toList();
 
-        return new PageResponse<>((int) userPage.getTotalElements(), userPage.getNumber() + 1, userDTOs);
+        int totalUsers = (int) userPage.getTotalElements();
+
+        return new PageResponse<>(totalUsers, page, userDTOs);
     }
 
     @GetMapping("/api/v1/users")

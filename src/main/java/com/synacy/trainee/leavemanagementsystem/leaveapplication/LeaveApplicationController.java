@@ -1,6 +1,8 @@
 package com.synacy.trainee.leavemanagementsystem.leaveapplication;
 
+import com.synacy.trainee.leavemanagementsystem.web.PageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +28,39 @@ public class LeaveApplicationController {
         return leaveApplicationService.fetchAllLeaveApplications();
     }
 
+    @GetMapping("/api/v1/leave/application/status")
+    public PageResponse<LeaveResponse> fetchLeaveApplicationsByStatus(
+            @RequestParam LeaveStatus status,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "max", defaultValue = "5") int max) {
+
+        Page<LeaveApplication> leave = leaveApplicationService.fetchLeaveApplicationsByStatus(status, page, max);
+
+        List<LeaveResponse> leaveResponses = leave.getContent().stream()
+                .map(LeaveResponse::new)
+                .toList();
+
+        int totalLeaves = (int) leave.getTotalElements();
+
+
+        return new PageResponse<>(totalLeaves, page, leaveResponses);
+    }
+
+    @GetMapping("api/v1/leave/applications/manager/{id}")
+    public PageResponse<LeaveResponse> getLeaveApplicationsByManagerId(
+            @PathVariable Long id,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "max", defaultValue = "5") int max) {
+        Page<LeaveApplication> leave = leaveApplicationService.getLeaveApplicationsByManagerId(id, page, max);
+
+        List<LeaveResponse> leaveResponses = leave.getContent().stream()
+                .map(LeaveResponse::new)
+                .toList();
+        int totalLeaves = (int) leave.getTotalElements();
+
+        return new PageResponse<>(totalLeaves, page, leaveResponses);
+    }
+
     @PutMapping("/api/v1/leave/application/{id}/status")
     public LeaveResponse updateLeaveApplicationStatus(@PathVariable Long id, @RequestParam LeaveStatus leaveStatus) {
         LeaveApplication updateLeave = leaveApplicationService.updateLeaveStatus(id, leaveStatus);
@@ -35,13 +70,6 @@ public class LeaveApplicationController {
     @GetMapping("/api/v1/users/{userId}/leave-applications")
     public List<LeaveResponse> getUserLeaveApplications(@PathVariable Long userId) {
         return leaveApplicationService.getLeaveApplicationsByUserId(userId).stream()
-                .map(LeaveResponse::new)
-                .toList();
-    }
-
-    @GetMapping("api/v1/leave/applications/manager/{id}")
-    public List<LeaveResponse> getLeaveApplicationsByManagerId(@PathVariable Long id) {
-        return leaveApplicationService.getLeaveApplicationsByManagerId(id).stream()
                 .map(LeaveResponse::new)
                 .toList();
     }
