@@ -77,9 +77,9 @@ public class LeaveApplicationService {
         return leaveApplicationRepository.findByApplicant_Id(userId);
     }
 
-    public Page<LeaveApplication> getLeaveApplicationsByManagerId(Long managerId, int page, int max) {
+    public Page<LeaveApplication> getLeaveApplicationsByManagerIdAndStatus(Long managerId, LeaveStatus status, int page, int max) {
         Pageable pageable = PageRequest.of(page - 1, max);
-        return leaveApplicationRepository.findLeaveApplicationByManager_Id(managerId, pageable);
+        return leaveApplicationRepository.findLeaveApplicationByManager_IdAndStatus(managerId, status, pageable);
     }
 
     public Page<LeaveApplication> fetchLeaveApplicationsByStatus(LeaveStatus status, int page, int max) {

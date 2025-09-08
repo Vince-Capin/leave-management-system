@@ -49,9 +49,10 @@ public class LeaveApplicationController {
     @GetMapping("api/v1/leave/applications/manager/{id}")
     public PageResponse<LeaveResponse> getLeaveApplicationsByManagerId(
             @PathVariable Long id,
+            @RequestParam LeaveStatus status,
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "max", defaultValue = "5") int max) {
-        Page<LeaveApplication> leave = leaveApplicationService.getLeaveApplicationsByManagerId(id, page, max);
+        Page<LeaveApplication> leave = leaveApplicationService.getLeaveApplicationsByManagerIdAndStatus(id, status, page, max);
 
         List<LeaveResponse> leaveResponses = leave.getContent().stream()
                 .map(LeaveResponse::new)
