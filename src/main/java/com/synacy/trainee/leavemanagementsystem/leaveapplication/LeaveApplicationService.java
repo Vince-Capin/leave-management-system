@@ -85,6 +85,12 @@ public class LeaveApplicationService {
                 .toList();
     }
 
+    public Page<LeaveApplication> fetchAllNonPendingLeaveApplications(int page, int max) {
+        LeaveStatus pendingStatus = LeaveStatus.PENDING;
+        Pageable pageable = PageRequest.of(page - 1, max);
+        return leaveApplicationRepository.findByStatusNot(pendingStatus, pageable);
+    }
+
     public List<LeaveApplication> getLeaveApplicationsByUserId(Long userId) {
         return leaveApplicationRepository.findByApplicant_Id(userId);
     }
