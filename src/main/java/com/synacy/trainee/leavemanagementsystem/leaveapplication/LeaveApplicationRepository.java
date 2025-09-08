@@ -14,4 +14,7 @@ public interface LeaveApplicationRepository extends JpaRepository<LeaveApplicati
     Page<LeaveApplication> findLeaveApplicationByManager_IdAndStatus(Long managerId, LeaveStatus status, Pageable pageable);
 
     Page<LeaveApplication> findLeaveApplicationByStatus(LeaveStatus status, Pageable pageable);
+
+    Page<LeaveApplication> findByStatusNot(LeaveStatus status, Pageable pageable);
+
 }
