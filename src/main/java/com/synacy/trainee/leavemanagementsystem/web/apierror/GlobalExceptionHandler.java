@@ -16,10 +16,10 @@ public class GlobalExceptionHandler {
         return new ApiErrorResponse("USER_NOT_FOUND", e.getMessage());
     }
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler({LeaveCreditsNotFoundException.class})
-    public ApiErrorResponse handleLeaveCreditsNotFoundException(LeaveCreditsNotFoundException e) {
-        return new ApiErrorResponse("USER_NOT_FOUND", e.getMessage());
+    @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
+    @ExceptionHandler(InsufficientLeaveCreditsException.class)
+    public ApiErrorResponse handleInsufficientLeaveCredits(InsufficientLeaveCreditsException e) {
+        return new ApiErrorResponse("INSUFFICIENT_CREDITS", e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)

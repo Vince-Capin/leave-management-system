@@ -16,7 +16,11 @@ public class LeaveCreditsModifier {
     public void modifyLeaveCredits(LeaveApplication leaveApplication, LeaveStatus status, LeaveCredits leaveCredits) {
         int numberOfDays = leaveApplication.getNumberOfDays();
 
-        if (status == LeaveStatus.APPROVED) leaveCredits.decreaseCredits(numberOfDays);
+        if (status == LeaveStatus.PENDING) {
+            leaveCredits.decreaseCredits(numberOfDays);
+        } else if (status == LeaveStatus.REJECTED || status == LeaveStatus.CANCELLED) {
+            leaveCredits.increaseCredits(numberOfDays);
+        }
 
         leaveCreditsRepository.save(leaveCredits);
     }

@@ -3,9 +3,11 @@ package com.synacy.trainee.leavemanagementsystem.leaveapplication;
 
 import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCredits;
 import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCreditsModifier;
+import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCreditsNotFoundException;
 import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCreditsService;
 import com.synacy.trainee.leavemanagementsystem.user.User;
 import com.synacy.trainee.leavemanagementsystem.user.UserRepository;
+import com.synacy.trainee.leavemanagementsystem.web.apierror.InsufficientLeaveCreditsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -47,6 +49,18 @@ public class LeaveApplicationService {
         leave.setNumberOfDays(leaveRequest.getNumberOfDays());
         leave.setStatus(LeaveStatus.PENDING);
 
+        LeaveCredits leaveCredits = leaveCreditsService.getLeaveCreditsOfUser(user);
+
+        if (leaveRequest.getNumberOfDays() > leaveCredits.getRemainingLeaveCredits()) {
+            throw new InsufficientLeaveCreditsException(
+                    String.format("Insufficient leave credits: requested %d days, but only %d remaining.",
+                            leaveRequest.getNumberOfDays(),
+                            leaveCredits.getRemainingLeaveCredits())
+            );
+        }
+
+        leaveCreditsModifier.modifyLeaveCredits(leave, LeaveStatus.PENDING,  leaveCredits);
+
         return leaveApplicationRepository.save(leave);
     }
 
@@ -54,13 +68,11 @@ public class LeaveApplicationService {
         LeaveApplication leave = leaveApplicationRepository.findById(leaveId)
                 .orElseThrow(() -> new IllegalArgumentException("Leave application not found with id: " + leaveId));
 
-        LeaveStatus previousStatus = leave.getStatus();
         leave.setStatus(status);
 
-        if (!previousStatus.equals(status)) {
-            LeaveCredits leaveCredits = leaveCreditsService.getLeaveCreditsOfUser(leave.getApplicant());
-            leaveCreditsModifier.modifyLeaveCredits(leave, status, leaveCredits);
-        }
+        LeaveCredits leaveCredits = leave.getApplicant().getLeaveCredits();
+
+        leaveCreditsModifier.modifyLeaveCredits(leave, status, leaveCredits);
 
         return leaveApplicationRepository.save(leave);
     }
