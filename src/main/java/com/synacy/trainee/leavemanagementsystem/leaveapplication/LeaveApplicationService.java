@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,24 +85,25 @@ public class LeaveApplicationService {
                 .toList();
     }
 
-    public Page<LeaveApplication> fetchAllNonPendingLeaveApplications(int page, int max) {
-        LeaveStatus pendingStatus = LeaveStatus.PENDING;
-        Pageable pageable = PageRequest.of(page - 1, max);
-        return leaveApplicationRepository.findByStatusNot(pendingStatus, pageable);
-    }
-
     public List<LeaveApplication> getLeaveApplicationsByUserId(Long userId) {
         return leaveApplicationRepository.findByApplicant_Id(userId);
     }
 
     public Page<LeaveApplication> getLeaveApplicationsByManagerIdAndStatus(Long managerId, LeaveStatus status, int page, int max) {
-        Pageable pageable = PageRequest.of(page - 1, max);
-        return leaveApplicationRepository.findLeaveApplicationByManager_IdAndStatus(managerId, status, pageable);
+        LeaveStatus pendingStatus = LeaveStatus.PENDING;
+        Pageable pageable = PageRequest.of(page - 1, max).withSort(Sort.by(Sort.Direction.ASC, "appliedDate"));
+
+        if(status == LeaveStatus.PENDING){
+            return leaveApplicationRepository.findLeaveApplicationByManager_IdAndStatus(managerId, pendingStatus, pageable);
+        }
+        else{
+            return leaveApplicationRepository.findByManager_IdAndStatusNot(managerId, pendingStatus, pageable);
+        }
     }
 
     public Page<LeaveApplication> fetchLeaveApplicationsByStatus(LeaveStatus status, int page, int max) {
         LeaveStatus pendingStatus = LeaveStatus.PENDING;
-        Pageable pageable = PageRequest.of(page - 1, max);
+        Pageable pageable = PageRequest.of(page - 1, max).withSort(Sort.by(Sort.Direction.ASC, "appliedDate"));
 
         if(status == pendingStatus){
             return leaveApplicationRepository.findLeaveApplicationByStatus(status, pageable);
