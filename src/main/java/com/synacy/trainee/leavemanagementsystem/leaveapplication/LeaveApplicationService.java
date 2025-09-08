@@ -3,7 +3,6 @@ package com.synacy.trainee.leavemanagementsystem.leaveapplication;
 
 import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCredits;
 import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCreditsModifier;
-import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCreditsNotFoundException;
 import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCreditsService;
 import com.synacy.trainee.leavemanagementsystem.user.User;
 import com.synacy.trainee.leavemanagementsystem.user.UserRepository;
@@ -101,7 +100,14 @@ public class LeaveApplicationService {
     }
 
     public Page<LeaveApplication> fetchLeaveApplicationsByStatus(LeaveStatus status, int page, int max) {
+        LeaveStatus pendingStatus = LeaveStatus.PENDING;
         Pageable pageable = PageRequest.of(page - 1, max);
-        return leaveApplicationRepository.findLeaveApplicationByStatus(status, pageable);
+
+        if(status == pendingStatus){
+            return leaveApplicationRepository.findLeaveApplicationByStatus(status, pageable);
+        }
+        else{
+            return leaveApplicationRepository.findByStatusNot(pendingStatus, pageable);
+        }
     }
 }

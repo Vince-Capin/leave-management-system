@@ -30,7 +30,7 @@ public class LeaveApplicationController {
 
     @GetMapping("/api/v1/leave/application/admin/history")
     public PageResponse<LeaveResponse> fetchAllNonPendingLeaveApplications(
-            @RequestParam (value = "pagae" , defaultValue = "1") int page,
+            @RequestParam (value = "page" , defaultValue = "1") int page,
             @RequestParam (value = "max", defaultValue = "5") int max) {
 
         Page<LeaveApplication> leave = leaveApplicationService.fetchAllNonPendingLeaveApplications(page, max);
