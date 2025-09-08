@@ -7,6 +7,9 @@ import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCreditsService
 import com.synacy.trainee.leavemanagementsystem.user.User;
 import com.synacy.trainee.leavemanagementsystem.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,7 +77,13 @@ public class LeaveApplicationService {
         return leaveApplicationRepository.findByApplicant_Id(userId);
     }
 
-    public List<LeaveApplication> getLeaveApplicationsByManagerId(Long managerId) {
-        return leaveApplicationRepository.findLeaveApplicationByManager_Id(managerId);
+    public Page<LeaveApplication> getLeaveApplicationsByManagerId(Long managerId, int page, int max) {
+        Pageable pageable = PageRequest.of(page - 1, max);
+        return leaveApplicationRepository.findLeaveApplicationByManager_Id(managerId, pageable);
+    }
+
+    public Page<LeaveApplication> fetchLeaveApplicationsByStatus(LeaveStatus status, int page, int max) {
+        Pageable pageable = PageRequest.of(page - 1, max);
+        return leaveApplicationRepository.findLeaveApplicationByStatus(status, pageable);
     }
 }
