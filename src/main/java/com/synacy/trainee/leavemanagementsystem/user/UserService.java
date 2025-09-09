@@ -38,7 +38,7 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        return userRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
 
     public User createUser(UserRequestDTO userRequest) {
@@ -100,11 +100,11 @@ public class UserService {
 
         if(user.getRole() == UserRole.MANAGER && (userRequest.role() ==  UserRole.EMPLOYEE || userRequest.role() ==  UserRole.HR)){
             List<User> users = fetchAllEmployeesUnderManager(user.getId());
-            users.forEach(User -> {User.setManager(null);});
+            users.forEach(User -> User.setManager(null));
             setManagerOfEmployeesToNUll(users);
 
             List<LeaveApplication> leaveApplications = this.leaveApplicationService.getActiveLeaveApplicationsByManagerId(user.getId(), LeaveStatus.PENDING);
-            leaveApplications.forEach(leaveApplication -> {leaveApplication.setManager(null);});
+            leaveApplications.forEach(leaveApplication -> leaveApplication.setManager(null));
             this.leaveApplicationService.setManagerToNull(leaveApplications);
         }
 
