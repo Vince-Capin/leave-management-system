@@ -28,13 +28,12 @@ public class LeaveApplicationController {
         return leaveApplicationService.fetchAllLeaveApplications();
     }
 
-    @GetMapping("/api/v1/leave/application/status")
-    public PageResponse<LeaveResponse> fetchLeaveApplicationsByStatus(
-            @RequestParam LeaveStatus status,
+    @GetMapping("/api/v1/leave/application/active")
+    public PageResponse<LeaveResponse> fetchPendingLeaveApplications(
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "max", defaultValue = "5") int max) {
 
-        Page<LeaveApplication> leave = leaveApplicationService.fetchLeaveApplicationsByStatus(status, page, max);
+        Page<LeaveApplication> leave = leaveApplicationService.fetchPendingLeaveApplications(page, max);
 
         List<LeaveResponse> leaveResponses = leave.getContent().stream()
                 .map(LeaveResponse::new)
@@ -46,14 +45,29 @@ public class LeaveApplicationController {
         return new PageResponse<>(totalLeaves, page, leaveResponses);
     }
 
-    @GetMapping("/api/v1/leave/application/{managerId}/status")
-    public PageResponse<LeaveResponse> fetchAllLeaveApplicationsByManagerIdAndStatus(
+    @GetMapping("/api/v1/leave/application/history")
+    public PageResponse<LeaveResponse> fetchNonLeaveApplicationsByStatus(
+            @RequestParam (value = "page", defaultValue = "1") int page,
+            @RequestParam (value = "max", defaultValue = "5") int max
+    ){
+        Page<LeaveApplication> nonPendingLeaves = leaveApplicationService.getNonPendingLeaveApplications(page, max);
+
+        List<LeaveResponse> leaveResponses = nonPendingLeaves.getContent().stream()
+                .map(LeaveResponse::new)
+                .toList();
+
+        int  totalLeaves = (int) nonPendingLeaves.getTotalElements();
+
+        return new PageResponse<>(totalLeaves, page, leaveResponses);
+    }
+
+    @GetMapping("/api/v1/leave/application/{managerId}/active")
+    public PageResponse<LeaveResponse> fetchAllPendingLeaveApplicationsByManagerIdAndStatus(
             @PathVariable Long managerId,
-            @RequestParam LeaveStatus status,
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "max", defaultValue = "5")  int max
     ){
-        Page<LeaveApplication> leave = leaveApplicationService.getLeaveApplicationsByManagerIdAndStatus(managerId, status, page, max);
+        Page<LeaveApplication> leave = leaveApplicationService.getPendingLeaveApplicationsByManagerIdAndStatus(managerId, page, max);
 
         List<LeaveResponse> leavesResponses = leave.getContent().stream()
                 .map(LeaveResponse::new)
@@ -62,6 +76,23 @@ public class LeaveApplicationController {
         int totalLeaves = (int) leave.getTotalElements();
 
         return new PageResponse<>(totalLeaves, page, leavesResponses);
+    }
+
+    @GetMapping("/api/v1/leave/application/{managerId}/history")
+    public PageResponse<LeaveResponse> fetchAllNonPendingLeaveApplicationsByManagerIdAndStatus(
+            @PathVariable Long managerId,
+            @RequestParam (value = "page", defaultValue = "1") int page,
+            @RequestParam (value = "max", defaultValue = "5") int max
+    ){
+        Page<LeaveApplication> leaves = leaveApplicationService.fetchNonPendingLeaveApplicationsByManagerId(managerId, page, max);
+
+        List<LeaveResponse> leaveResponses = leaves.getContent().stream()
+                .map(LeaveResponse::new)
+                .toList();
+
+        int totalLeaves = (int) leaves.getTotalElements();
+
+        return new PageResponse<>(totalLeaves, page, leaveResponses);
     }
 
     @PutMapping("/api/v1/leave/application/{id}/status")
