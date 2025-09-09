@@ -103,13 +103,19 @@ public class LeaveApplicationService {
 
     public Page<LeaveApplication> fetchLeaveApplicationsByStatus(LeaveStatus status, int page, int max) {
         LeaveStatus pendingStatus = LeaveStatus.PENDING;
+        LeaveStatus approvedStatus = LeaveStatus.APPROVED;
+        LeaveStatus rejectStatus = LeaveStatus.REJECTED;
+        LeaveStatus cancelStatus = LeaveStatus.CANCELLED;
         Pageable pageable = PageRequest.of(page - 1, max).withSort(Sort.by(Sort.Direction.ASC, "appliedDate"));
 
         if(status == pendingStatus){
             return leaveApplicationRepository.findLeaveApplicationByStatus(status, pageable);
-        }
-        else{
-            return leaveApplicationRepository.findByStatusNot(pendingStatus, pageable);
+        } else if (status == approvedStatus) {
+            return leaveApplicationRepository.findLeaveApplicationByStatus(status, pageable);
+        } else if (status == rejectStatus) {
+            return leaveApplicationRepository.findLeaveApplicationByStatus(status, pageable);
+        } else {
+            return leaveApplicationRepository.findLeaveApplicationByStatus(cancelStatus, pageable);
         }
     }
 
