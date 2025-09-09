@@ -3,6 +3,9 @@ package com.synacy.trainee.leavemanagementsystem.user;
 import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCredits;
 import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCreditsRepository;
 import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCreditsService;
+import com.synacy.trainee.leavemanagementsystem.leaveapplication.LeaveApplication;
+import com.synacy.trainee.leavemanagementsystem.leaveapplication.LeaveApplicationService;
+import com.synacy.trainee.leavemanagementsystem.leaveapplication.LeaveStatus;
 import com.synacy.trainee.leavemanagementsystem.web.apierror.InvalidOperationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,12 +23,17 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final LeaveCreditsService leaveCreditsService;
+    private final LeaveApplicationService leaveApplicationService;
     private final LeaveCreditsRepository leaveCreditsRepository; //for testing
 
     @Autowired
-    public UserService(UserRepository userRepository, LeaveCreditsService leaveCreditsService,  LeaveCreditsRepository leaveCreditsRepository) {
+    public UserService(UserRepository userRepository,
+                       LeaveCreditsService leaveCreditsService,
+                       LeaveCreditsRepository leaveCreditsRepository,
+                       LeaveApplicationService leaveApplicationService) {
         this.userRepository = userRepository;
         this.leaveCreditsService = leaveCreditsService;
+        this.leaveApplicationService = leaveApplicationService;
         this.leaveCreditsRepository = leaveCreditsRepository;
     }
 
@@ -90,6 +98,16 @@ public class UserService {
             leaveCredits.setRemainingLeaveCredits(userRequest.leaveCredits());
         }
 
+        if(user.getRole() == UserRole.MANAGER && (userRequest.role() ==  UserRole.EMPLOYEE || userRequest.role() ==  UserRole.HR)){
+            List<User> users = fetchAllEmployeesUnderManager(user.getId());
+            users.forEach(User -> {User.setManager(null);});
+            setManagerOfEmployeesToNUll(users);
+
+            List<LeaveApplication> leaveApplications = this.leaveApplicationService.getActiveLeaveApplicationsByManagerId(user.getId(), LeaveStatus.PENDING);
+            leaveApplications.forEach(leaveApplication -> {leaveApplication.setManager(null);});
+            this.leaveApplicationService.setManagerToNull(leaveApplications);
+        }
+
         return saveUser(userRequest, user);
     }
 
@@ -105,6 +123,14 @@ public class UserService {
 
     public List<User> fetchAllManagers() {
         return userRepository.findAllByRole(UserRole.MANAGER);
+    }
+
+    public List<User> fetchAllEmployeesUnderManager(Long managerId) {
+        return userRepository.findALlByManager_Id(managerId);
+    }
+
+    public void setManagerOfEmployeesToNUll(List<User> users) {
+        userRepository.saveAll(users);
     }
 
     //for testing purposes

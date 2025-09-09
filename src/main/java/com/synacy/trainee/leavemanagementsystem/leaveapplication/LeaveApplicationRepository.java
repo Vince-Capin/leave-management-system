@@ -1,5 +1,6 @@
 package com.synacy.trainee.leavemanagementsystem.leaveapplication;
 
+import com.synacy.trainee.leavemanagementsystem.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,4 +20,5 @@ public interface LeaveApplicationRepository extends JpaRepository<LeaveApplicati
 
     Page<LeaveApplication> findByManager_IdAndStatusNot(Long managerId, LeaveStatus status, Pageable pageable);
 
+    List<LeaveApplication> findByManager_IdAndStatus(Long managerId, LeaveStatus status);
 }

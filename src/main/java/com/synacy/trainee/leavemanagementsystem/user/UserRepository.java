@@ -9,7 +9,11 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByName(String name);
+
     List<User> findAllByRole(UserRole role);
+
     boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
+
+    List<User> findALlByManager_Id(Long id);
 }
 
