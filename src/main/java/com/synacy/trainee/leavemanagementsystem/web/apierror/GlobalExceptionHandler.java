@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
         return new ApiErrorResponse("INSUFFICIENT_CREDITS", e.getMessage());
     }
 
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(InvalidOperationException.class)
     public ApiErrorResponse handleInvalidOperationException(InvalidOperationException e) {
         return new ApiErrorResponse(e.getErrorCode(), e.getErrorMessage());

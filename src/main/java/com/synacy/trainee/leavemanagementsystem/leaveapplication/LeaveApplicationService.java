@@ -120,5 +120,13 @@ public class LeaveApplicationService {
 
         return leaveApplicationRepository.findByStatusNot(pendingStatus, pageable);
     }
+    public List<LeaveApplication> getActiveLeaveApplicationsByManagerId(Long managerId, LeaveStatus status) {
+        return leaveApplicationRepository.findByManager_IdAndStatus(managerId, status);
+    }
+
+    public void setManagerToNull(List<LeaveApplication> leaveApplications) {
+        leaveApplicationRepository.saveAll(leaveApplications);
+
+    }
 }
 
