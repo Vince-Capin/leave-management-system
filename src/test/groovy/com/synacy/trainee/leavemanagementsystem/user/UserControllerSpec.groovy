@@ -7,8 +7,8 @@ import spock.util.mop.Use
 
 class UserControllerSpec extends Specification {
 
-    UserController userController;
-    UserService userService;
+    UserController userController
+    UserService userService
 
     def setup() {
         userService = Mock(UserService)
@@ -95,10 +95,10 @@ class UserControllerSpec extends Specification {
 
     def "addUser should create a new user and return the user"(){
         given:
-        UserRequestDTO request = new UserRequestDTO(name: "New User", role: UserRole.EMPLOYEE)
-        User createdUser = new User(id: 1L, name: request.name, role: request.role)
+        UserRequestDTO request = new UserRequestDTO("New User", UserRole.EMPLOYEE, null, null)
+        User createdUser = new User(id: 1L, name: request.name(), role: request.role())
 
-        1 * userService.addUser(request) >> createdUser
+        1 * userService.createUser(request) >> createdUser
 
         when:
         UserResponseDTO result = userController.addUser(request)
@@ -109,13 +109,13 @@ class UserControllerSpec extends Specification {
         result.role == createdUser.role
     }
 
-    def "updateUser should update the details of an existing user and return the updated value" () {
+    def "updateUser should update the user and return the updated user details"() {
         given:
         Long userId = 1L
         UserRequestDTO request = new UserRequestDTO("Updated User", UserRole.MANAGER, null, null)
         User updatedUser = new User(id: userId, name: request.name(), role: request.role())
 
-        1 * userService.updateUser(userId, request) >> Optional.of(updatedUser)
+        1 * userService.updateUser(userId, request) >> updatedUser
 
         when:
         UserResponseDTO result = userController.updateUser(userId, request)
@@ -125,7 +125,6 @@ class UserControllerSpec extends Specification {
         result.name == updatedUser.name
         result.role == updatedUser.role
     }
-
 
     def "getAllManagers should list of managers"() {
         given:

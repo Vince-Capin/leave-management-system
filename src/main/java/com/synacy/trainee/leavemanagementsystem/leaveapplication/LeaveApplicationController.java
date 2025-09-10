@@ -29,11 +29,12 @@ public class LeaveApplicationController {
     }
 
     @GetMapping("/api/v1/leave/application/active")
-    public PageResponse<LeaveResponse> fetchPendingLeaveApplications(
+    public PageResponse<LeaveResponse> fetchLeaveApplicationsByStatus(
+            @RequestParam LeaveStatus status,
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "max", defaultValue = "5") int max) {
 
-        Page<LeaveApplication> leave = leaveApplicationService.fetchPendingLeaveApplications(page, max);
+        Page<LeaveApplication> leave = leaveApplicationService.fetchLeaveApplicationsByStatus(status, page, max);
 
         List<LeaveResponse> leaveResponses = leave.getContent().stream()
                 .map(LeaveResponse::new)
@@ -46,11 +47,12 @@ public class LeaveApplicationController {
     }
 
     @GetMapping("/api/v1/leave/application/history")
-    public PageResponse<LeaveResponse> fetchNonLeaveApplicationsByStatus(
+    public PageResponse<LeaveResponse> fetchLeaveApplicationsByStatusNot(
+            @RequestParam LeaveStatus status,
             @RequestParam (value = "page", defaultValue = "1") int page,
             @RequestParam (value = "max", defaultValue = "5") int max
     ){
-        Page<LeaveApplication> nonPendingLeaves = leaveApplicationService.getNonPendingLeaveApplications(page, max);
+        Page<LeaveApplication> nonPendingLeaves = leaveApplicationService.getLeaveApplicationsByStatusNot(status, page, max);
 
         List<LeaveResponse> leaveResponses = nonPendingLeaves.getContent().stream()
                 .map(LeaveResponse::new)
@@ -62,12 +64,13 @@ public class LeaveApplicationController {
     }
 
     @GetMapping("/api/v1/leave/application/{managerId}/active")
-    public PageResponse<LeaveResponse> fetchAllPendingLeaveApplicationsByManagerIdAndStatus(
+    public PageResponse<LeaveResponse> fetchLeaveApplicationsByManagerIdAndStatus(
             @PathVariable Long managerId,
+            @RequestParam LeaveStatus status,
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "max", defaultValue = "5")  int max
     ){
-        Page<LeaveApplication> leave = leaveApplicationService.getPendingLeaveApplicationsByManagerIdAndStatus(managerId, page, max);
+        Page<LeaveApplication> leave = leaveApplicationService.getLeaveApplicationsByManagerIdAndStatus(managerId, status, page, max);
 
         List<LeaveResponse> leavesResponses = leave.getContent().stream()
                 .map(LeaveResponse::new)
@@ -79,12 +82,13 @@ public class LeaveApplicationController {
     }
 
     @GetMapping("/api/v1/leave/application/{managerId}/history")
-    public PageResponse<LeaveResponse> fetchAllNonPendingLeaveApplicationsByManagerIdAndStatus(
+    public PageResponse<LeaveResponse> fetchLeaveApplicationsByManagerIdAndStatusNot(
             @PathVariable Long managerId,
+            @RequestParam LeaveStatus status,
             @RequestParam (value = "page", defaultValue = "1") int page,
             @RequestParam (value = "max", defaultValue = "5") int max
     ){
-        Page<LeaveApplication> leaves = leaveApplicationService.fetchNonPendingLeaveApplicationsByManagerId(managerId, page, max);
+        Page<LeaveApplication> leaves = leaveApplicationService.fetchLeaveApplicationsByManagerIdAndStatusNot(managerId, status, page, max);
 
         List<LeaveResponse> leaveResponses = leaves.getContent().stream()
                 .map(LeaveResponse::new)
