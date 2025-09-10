@@ -85,8 +85,10 @@ public class LeaveApplicationService {
                 .toList();
     }
 
-    public List<LeaveApplication> getLeaveApplicationsByUserId(Long userId) {
-        return leaveApplicationRepository.findByApplicant_Id(userId);
+    public Page<LeaveApplication> getLeaveApplicationsByUserId(Long userId, int page, int max) {
+        Pageable pageable = PageRequest.of(page - 1, max).withSort(Sort.by(Sort.Direction.ASC, "appliedDate"));
+
+        return leaveApplicationRepository.findByApplicant_Id(userId, pageable);
     }
 
     public Page<LeaveApplication> getLeaveApplicationsByManagerIdAndStatus(Long managerId, LeaveStatus status, int page, int max) {
