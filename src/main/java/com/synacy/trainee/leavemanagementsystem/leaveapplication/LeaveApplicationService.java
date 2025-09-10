@@ -89,36 +89,32 @@ public class LeaveApplicationService {
         return leaveApplicationRepository.findByApplicant_Id(userId);
     }
 
-    public Page<LeaveApplication> getPendingLeaveApplicationsByManagerIdAndStatus(Long managerId, int page, int max) {
-        LeaveStatus pendingStatus = LeaveStatus.PENDING;
+    public Page<LeaveApplication> getLeaveApplicationsByManagerIdAndStatus(Long managerId, LeaveStatus status, int page, int max) {
         Pageable pageable = PageRequest.of(page - 1, max).withSort(Sort.by(Sort.Direction.ASC, "appliedDate"));
 
-        return leaveApplicationRepository.findLeaveApplicationByManager_IdAndStatus(managerId, pendingStatus, pageable);
+        return leaveApplicationRepository.findLeaveApplicationByManager_IdAndStatus(managerId, status, pageable);
 
     }
 
-    public Page<LeaveApplication> fetchNonPendingLeaveApplicationsByManagerId(Long managerId, int page, int max) {
-        LeaveStatus pendingStatus = LeaveStatus.PENDING;
+    public Page<LeaveApplication> fetchLeaveApplicationsByManagerIdAndStatusNot(Long managerId, LeaveStatus status, int page, int max) {
 
         Pageable pageable = PageRequest.of(page - 1, max);
 
-        return leaveApplicationRepository.findByManager_IdAndStatusNot(managerId, pendingStatus, pageable);
+        return leaveApplicationRepository.findByManager_IdAndStatusNot(managerId, status, pageable);
     }
 
-    public Page<LeaveApplication> fetchPendingLeaveApplications(int page, int max) {
+    public Page<LeaveApplication> fetchLeaveApplicationsByStatus(LeaveStatus status, int page, int max) {
 
-        LeaveStatus pendingStatus = LeaveStatus.PENDING;
         Pageable pageable = PageRequest.of(page - 1, max).withSort(Sort.by(Sort.Direction.ASC, "appliedDate"));
 
-        return leaveApplicationRepository.findLeaveApplicationByStatus(pendingStatus, pageable);
+        return leaveApplicationRepository.findLeaveApplicationByStatus(status, pageable);
     }
 
-    public Page<LeaveApplication> getNonPendingLeaveApplications(int page, int max) {
+    public Page<LeaveApplication> getLeaveApplicationsByStatusNot(LeaveStatus status, int page, int max) {
 
-        LeaveStatus pendingStatus = LeaveStatus.PENDING;
         Pageable pageable = PageRequest.of(page - 1, max);
 
-        return leaveApplicationRepository.findByStatusNot(pendingStatus, pageable);
+        return leaveApplicationRepository.findByStatusNot(status, pageable);
     }
     public List<LeaveApplication> getActiveLeaveApplicationsByManagerId(Long managerId, LeaveStatus status) {
         return leaveApplicationRepository.findByManager_IdAndStatus(managerId, status);
