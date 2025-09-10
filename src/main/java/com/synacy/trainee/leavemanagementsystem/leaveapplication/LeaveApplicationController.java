@@ -108,9 +108,19 @@ public class LeaveApplicationController {
     }
 
     @GetMapping("/api/v1/leave-application/{userId}")
-    public List<LeaveResponse> getUserLeaveApplications(@PathVariable Long userId) {
-        return leaveApplicationService.getLeaveApplicationsByUserId(userId).stream()
+    public PageResponse<LeaveResponse> getUserLeaveApplications(
+            @PathVariable Long userId,
+            @RequestParam (value = "page", defaultValue = "1") int page,
+            @RequestParam (value = "max", defaultValue = "5") int max) {
+
+        Page<LeaveApplication> leaves = leaveApplicationService.getLeaveApplicationsByUserId(userId, page, max);
+
+        List<LeaveResponse> leaveResponses =  leaves.getContent().stream()
                 .map(LeaveResponse::new)
                 .toList();
+
+        int totalLeaves = (int) leaves.getTotalElements();
+
+        return new PageResponse<>(totalLeaves, page, leaveResponses);
     }
 }

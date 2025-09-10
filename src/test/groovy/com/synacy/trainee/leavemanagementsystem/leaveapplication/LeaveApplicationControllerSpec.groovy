@@ -250,7 +250,7 @@ class LeaveApplicationControllerSpec extends Specification {
         [leaveApplication3.manager.name, leaveApplication4.manager.name] == response.content()*.manager
     }
 
-    def "fetchLeaveApplicationByManagerIdAndStatus should a return a paginated list of leave applications by manager"(){
+    def "fetchLeaveApplicationByManagerIdAndStatus should a return a empty list of leave applications by manager"(){
         given:
         int page = 1
         int max = 5
@@ -292,22 +292,30 @@ class LeaveApplicationControllerSpec extends Specification {
     def "getUserLeaveApplication should be able to get all leave applications of the user" () {
         given:
         Long userId = employee1.id
+        int page = 1
+        int max = 5
+        int totalCount = 2
+        int totalPages = 1
         leaveApplication2.applicant = employee1
 
+        Page<LeaveApplication> leaveApplicationPage = Mock()
+        leaveApplicationPage.getContent() >> [leaveApplication1, leaveApplication2]
+        leaveApplicationPage.getTotalElements() >> totalCount
+        leaveApplicationPage.totalPages >> totalPages
+
         when:
-        List<LeaveResponse> response = leaveApplicationController.getUserLeaveApplications(userId);
+        PageResponse<LeaveResponse> response = leaveApplicationController.getUserLeaveApplications(userId, page, max)
 
         then:
-        1 * leaveApplicationService.getLeaveApplicationsByUserId(userId) >> [leaveApplication1, leaveApplication2]
-        [leaveApplication1.id, leaveApplication2.id] == response*.id
-        [leaveApplication1.applicant.name, leaveApplication2.applicant.name] == response*.name
-        [leaveApplication1.appliedDate, leaveApplication2.appliedDate] == response*.dateApplied
-        [leaveApplication1.startDate, leaveApplication2.startDate] == response*.startDate
-        [leaveApplication1.endDate, leaveApplication2.endDate] == response*.endDate
-        [(double) leaveApplication1.numberOfDays, leaveApplication2.numberOfDays] == response*.numberOfDays
-        [leaveApplication1.reason, leaveApplication2.reason] == response*.reason
-        [leaveApplication1.status, leaveApplication2.status] == response*.status
-        [leaveApplication1.manager.name, leaveApplication2.manager.name] == response*.manager
-
+        1 * leaveApplicationService.getLeaveApplicationsByUserId(userId, page, max) >> leaveApplicationPage
+        [leaveApplication1.id, leaveApplication2.id] == response.content()*.id
+        [leaveApplication1.applicant.name, leaveApplication2.applicant.name] == response.content()*.name
+        [leaveApplication1.appliedDate, leaveApplication2.appliedDate] == response.content()*.dateApplied
+        [leaveApplication1.startDate, leaveApplication2.startDate] == response.content()*.startDate
+        [leaveApplication1.endDate, leaveApplication2.endDate] == response.content()*.endDate
+        [(double) leaveApplication1.numberOfDays, leaveApplication2.numberOfDays] == response.content()*.numberOfDays
+        [leaveApplication1.reason, leaveApplication2.reason] == response.content()*.reason
+        [leaveApplication1.status, leaveApplication2.status] == response.content()*.status
+        [leaveApplication1.manager.name, leaveApplication2.manager.name] == response.content()*.manager
     }
 }
