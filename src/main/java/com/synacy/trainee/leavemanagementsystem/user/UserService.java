@@ -96,6 +96,7 @@ public class UserService {
             LeaveCredits leaveCredits = leaveCreditsService.getLeaveCreditsOfUser(user);
             leaveCredits.setTotalLeaveCredits(userRequest.leaveCredits());
             leaveCredits.setRemainingLeaveCredits(userRequest.leaveCredits());
+            user.setLeaveCredits(leaveCredits);
         }
 
         if(user.getRole() == UserRole.MANAGER && (userRequest.role() ==  UserRole.EMPLOYEE || userRequest.role() ==  UserRole.HR)){

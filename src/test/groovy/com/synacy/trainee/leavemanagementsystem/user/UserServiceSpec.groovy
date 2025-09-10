@@ -5,6 +5,7 @@ import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCreditsReposit
 import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCreditsService
 import com.synacy.trainee.leavemanagementsystem.leaveapplication.LeaveApplication
 import com.synacy.trainee.leavemanagementsystem.leaveapplication.LeaveApplicationService
+import com.synacy.trainee.leavemanagementsystem.leaveapplication.LeaveStatus
 import com.synacy.trainee.leavemanagementsystem.web.apierror.InvalidOperationException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Sort
@@ -61,22 +62,23 @@ class UserServiceSpec extends Specification{
 
     def "createUser() should create a user with leave credits when role is not HR and leave credits are provided"() {
         given:
-        UserRequestDTO userRequest = new UserRequestDTO("Employee", UserRole.EMPLOYEE, 10, null)
-        User user = new User(name: "Employee", role: UserRole.EMPLOYEE)
-        LeaveCredits leaveCredits = new LeaveCredits(totalLeaveCredits: 10, remainingLeaveCredits: 10)
+        Long userId = 1L
+        UserRequestDTO userRequest = new UserRequestDTO("UpdatedUser", UserRole.EMPLOYEE, 20, null)
+        User user = new User(id: userId, name: "OldUser", role: UserRole.EMPLOYEE)
+        LeaveCredits leaveCredits = new LeaveCredits(totalLeaveCredits: 10, remainingLeaveCredits: 5)
 
-        userRepository.existsByName("Employee") >> false
+        userRepository.findById(userId) >> Optional.of(user)
+        leaveCreditsService.getLeaveCreditsOfUser(user) >> leaveCredits
         userRepository.save(_) >> user
-        leaveCreditsService.setLeaveCreditsForNewUsers(user, userRequest) >> leaveCredits
 
         when:
-        User result = userService.createUser(userRequest)
+        User result = userService.updateUser(userId, userRequest)
 
         then:
-        result.name == "Employee"
+        result.name == "UpdatedUser"
         result.role == UserRole.EMPLOYEE
-        result.leaveCredits.totalLeaveCredits == 10
-        result.leaveCredits.remainingLeaveCredits == 10
+        result.leaveCredits.totalLeaveCredits == 20
+        result.leaveCredits.remainingLeaveCredits == 20
     }
 
     def "createUser() should throw InvalidOperationException when username already exists"() {
@@ -393,8 +395,32 @@ class UserServiceSpec extends Specification{
         result.isEmpty()
     }
 
-    def "setManagerOfEmployeesToNUll()"(){}
+    def "setManagerOfEmployeesToNull should save all users with null manager"() {
+        given:
+        User employee1 = new User(id: 1L, name: "Employee One", role: UserRole.EMPLOYEE, manager: null)
+        User employee2 = new User(id: 2L, name: "Employee Two", role: UserRole.EMPLOYEE, manager: null)
+        List<User> employees = [employee1, employee2]
 
+        1 * userRepository.saveAll(employees) >> employees
 
+        when:
+        userService.setManagerOfEmployeesToNUll(employees)
+
+        then:
+        noExceptionThrown()
+    }
+
+    def "setManagerOfEmployeesToNull should handle empty list of users"() {
+        given:
+        List<User> employees = []
+
+        1 * userRepository.saveAll(employees) >> employees
+
+        when:
+        userService.setManagerOfEmployeesToNUll(employees)
+
+        then:
+        noExceptionThrown()
+    }
 
 }
