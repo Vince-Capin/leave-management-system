@@ -20,7 +20,7 @@ public class UserController {
         userService.createInitialUsers();
     }
 
-    @GetMapping("/api/v1/users/paginated")
+    @GetMapping("/api/v1/user/paginated")
     public PageResponse<UserResponseDTO> getUsers(
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "5") int size) {
@@ -35,7 +35,7 @@ public class UserController {
         return new PageResponse<>(totalUsers, page, userDTOs);
     }
 
-    @GetMapping("/api/v1/users")
+    @GetMapping("/api/v1/user")
     public List<UserResponseDTO> getAllUsers() {
         List<User> users = userService.getAllUsers();
 

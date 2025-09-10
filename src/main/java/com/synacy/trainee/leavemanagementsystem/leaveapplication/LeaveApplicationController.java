@@ -17,18 +17,18 @@ public class LeaveApplicationController {
      this.leaveApplicationService = leaveApplicationService;
     }
 
-    @PostMapping("/api/v1/leave/application")
+    @PostMapping("/api/v1/leave-application")
     public LeaveResponse createLeaveApplication(@RequestBody LeaveRequest leaveRequest) {
         LeaveApplication leave = leaveApplicationService.createLeaveApplication(leaveRequest);
         return new LeaveResponse(leave);
     }
 
-    @GetMapping("/api/v1/leave/application")
+    @GetMapping("/api/v1/leave-application")
     public List<LeaveResponse> fetchAllLeaveApplications() {
         return leaveApplicationService.fetchAllLeaveApplications();
     }
 
-    @GetMapping("/api/v1/leave/application/active")
+    @GetMapping("/api/v1/leave-application/active")
     public PageResponse<LeaveResponse> fetchLeaveApplicationsByStatus(
             @RequestParam LeaveStatus status,
             @RequestParam(value = "page", defaultValue = "1") int page,
@@ -46,7 +46,7 @@ public class LeaveApplicationController {
         return new PageResponse<>(totalLeaves, page, leaveResponses);
     }
 
-    @GetMapping("/api/v1/leave/application/history")
+    @GetMapping("/api/v1/leave-application/history")
     public PageResponse<LeaveResponse> fetchLeaveApplicationsByStatusNot(
             @RequestParam LeaveStatus status,
             @RequestParam (value = "page", defaultValue = "1") int page,
@@ -63,7 +63,7 @@ public class LeaveApplicationController {
         return new PageResponse<>(totalLeaves, page, leaveResponses);
     }
 
-    @GetMapping("/api/v1/leave/application/{managerId}/active")
+    @GetMapping("/api/v1/leave-application/{managerId}/active")
     public PageResponse<LeaveResponse> fetchLeaveApplicationsByManagerIdAndStatus(
             @PathVariable Long managerId,
             @RequestParam LeaveStatus status,
@@ -81,7 +81,7 @@ public class LeaveApplicationController {
         return new PageResponse<>(totalLeaves, page, leavesResponses);
     }
 
-    @GetMapping("/api/v1/leave/application/{managerId}/history")
+    @GetMapping("/api/v1/leave-application/{managerId}/history")
     public PageResponse<LeaveResponse> fetchLeaveApplicationsByManagerIdAndStatusNot(
             @PathVariable Long managerId,
             @RequestParam LeaveStatus status,
@@ -99,13 +99,16 @@ public class LeaveApplicationController {
         return new PageResponse<>(totalLeaves, page, leaveResponses);
     }
 
-    @PutMapping("/api/v1/leave/application/{id}/status")
-    public LeaveResponse updateLeaveApplicationStatus(@PathVariable Long id, @RequestParam LeaveStatus leaveStatus) {
+    @PutMapping("/api/v1/leave-application/{id}/status")
+    public LeaveResponse updateLeaveApplicationStatus(
+            @PathVariable Long id,
+            @RequestParam LeaveStatus leaveStatus
+    ){
         LeaveApplication updateLeave = leaveApplicationService.updateLeaveStatus(id, leaveStatus);
         return new LeaveResponse(updateLeave);
     }
 
-    @GetMapping("/api/v1/users/{userId}/leave-applications")
+    @GetMapping("/api/v1/leave-application/{userId}")
     public List<LeaveResponse> getUserLeaveApplications(@PathVariable Long userId) {
         return leaveApplicationService.getLeaveApplicationsByUserId(userId).stream()
                 .map(LeaveResponse::new)
