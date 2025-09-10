@@ -1,14 +1,14 @@
 package com.synacy.trainee.leavemanagementsystem.leaveapplication;
 
-import com.synacy.trainee.leavemanagementsystem.user.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.checkerframework.checker.units.qual.N;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
 @NoArgsConstructor
 @Getter
+@Setter
 public class LeaveRequest {
     private Long userId;
     private LocalDate startDate;

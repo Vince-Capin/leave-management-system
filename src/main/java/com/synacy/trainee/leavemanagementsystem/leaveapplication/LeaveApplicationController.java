@@ -42,7 +42,6 @@ public class LeaveApplicationController {
 
         int totalLeaves = (int) leave.getTotalElements();
 
-
         return new PageResponse<>(totalLeaves, page, leaveResponses);
     }
 
