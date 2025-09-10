@@ -5,6 +5,7 @@ import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCredits;
 import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCreditsModifier;
 import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCreditsService;
 import com.synacy.trainee.leavemanagementsystem.user.User;
+import com.synacy.trainee.leavemanagementsystem.user.UserNotFoundException;
 import com.synacy.trainee.leavemanagementsystem.user.UserRepository;
 import com.synacy.trainee.leavemanagementsystem.web.apierror.InsufficientLeaveCreditsException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class LeaveApplicationService {
     @Transactional
     public LeaveApplication createLeaveApplication(LeaveRequest leaveRequest) {
         User user = userRepository.findById(leaveRequest.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + leaveRequest.getUserId()));
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + leaveRequest.getUserId()));
 
         LeaveApplication leave = new LeaveApplication();
         leave.setApplicant(user);
@@ -85,20 +86,20 @@ public class LeaveApplicationService {
                 .toList();
     }
 
-    public List<LeaveApplication> getLeaveApplicationsByUserId(Long userId) {
-        return leaveApplicationRepository.findByApplicant_Id(userId);
+    public Page<LeaveApplication> getLeaveApplicationsByUserId(Long userId, int page, int max) {
+        Pageable pageable = PageRequest.of(page - 1, max).withSort(Sort.by(Sort.Direction.ASC, "appliedDate"));
+
+        return leaveApplicationRepository.findByApplicant_Id(userId, pageable);
     }
 
     public Page<LeaveApplication> getLeaveApplicationsByManagerIdAndStatus(Long managerId, LeaveStatus status, int page, int max) {
         Pageable pageable = PageRequest.of(page - 1, max).withSort(Sort.by(Sort.Direction.ASC, "appliedDate"));
 
         return leaveApplicationRepository.findLeaveApplicationByManager_IdAndStatus(managerId, status, pageable);
-
     }
 
     public Page<LeaveApplication> fetchLeaveApplicationsByManagerIdAndStatusNot(Long managerId, LeaveStatus status, int page, int max) {
-
-        Pageable pageable = PageRequest.of(page - 1, max);
+        Pageable pageable = PageRequest.of(page - 1, max).withSort(Sort.by(Sort.Direction.ASC, "appliedDate"));
 
         return leaveApplicationRepository.findByManager_IdAndStatusNot(managerId, status, pageable);
     }
@@ -116,13 +117,13 @@ public class LeaveApplicationService {
 
         return leaveApplicationRepository.findByStatusNot(status, pageable);
     }
+
     public List<LeaveApplication> getActiveLeaveApplicationsByManagerId(Long managerId, LeaveStatus status) {
         return leaveApplicationRepository.findByManager_IdAndStatus(managerId, status);
     }
 
     public void setManagerToNull(List<LeaveApplication> leaveApplications) {
         leaveApplicationRepository.saveAll(leaveApplications);
-
     }
 }
 

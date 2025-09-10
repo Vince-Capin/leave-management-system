@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface LeaveApplicationRepository extends JpaRepository<LeaveApplication, Long> {
-    List<LeaveApplication> findByApplicant_Id(Long id);
+    Page<LeaveApplication> findByApplicant_Id(Long id, Pageable pageable);
 
     Page<LeaveApplication> findLeaveApplicationByManager_IdAndStatus(Long managerId, LeaveStatus status, Pageable pageable);
 
