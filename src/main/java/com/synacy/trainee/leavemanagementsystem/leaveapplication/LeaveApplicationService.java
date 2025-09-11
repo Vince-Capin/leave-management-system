@@ -44,6 +44,7 @@ public class LeaveApplicationService {
         LeaveApplication leave = new LeaveApplication();
         leave.setApplicant(user);
         leave.setManager(user.getManager());
+        leave.setApprover(null);
         leave.setStartDate(leaveRequest.getStartDate());
         leave.setEndDate(leaveRequest.getEndDate());
         leave.setReason(leaveRequest.getReason());
@@ -65,10 +66,14 @@ public class LeaveApplicationService {
         return leaveApplicationRepository.save(leave);
     }
 
-    public LeaveApplication updateLeaveStatus(Long leaveId, LeaveStatus status) {
+    public LeaveApplication updateLeaveStatus(Long leaveId, Long approverId, LeaveStatus status) {
         LeaveApplication leave = leaveApplicationRepository.findById(leaveId)
                 .orElseThrow(() -> new IllegalArgumentException("Leave application not found with id: " + leaveId));
 
+        User approver = userRepository.findById(approverId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + approverId));
+
+        leave.setApprover(approver);
         leave.setStatus(status);
 
         LeaveCredits leaveCredits = leave.getApplicant().getLeaveCredits();

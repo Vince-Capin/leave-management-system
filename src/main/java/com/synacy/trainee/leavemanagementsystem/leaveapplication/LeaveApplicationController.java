@@ -98,12 +98,13 @@ public class LeaveApplicationController {
         return new PageResponse<>(totalLeaves, page, leaveResponses);
     }
 
-    @PutMapping("/api/v1/leave-application/{id}/status")
+    @PutMapping("/api/v1/leave-application/{id}/{approverId}/status")
     public LeaveResponse updateLeaveApplicationStatus(
             @PathVariable Long id,
+            @PathVariable Long approverId,
             @RequestParam LeaveStatus leaveStatus
     ){
-        LeaveApplication updateLeave = leaveApplicationService.updateLeaveStatus(id, leaveStatus);
+        LeaveApplication updateLeave = leaveApplicationService.updateLeaveStatus(id, approverId, leaveStatus);
         return new LeaveResponse(updateLeave);
     }
 
