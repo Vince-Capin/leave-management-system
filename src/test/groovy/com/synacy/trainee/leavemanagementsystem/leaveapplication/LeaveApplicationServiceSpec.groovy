@@ -231,7 +231,7 @@ class LeaveApplicationServiceSpec extends Specification{
                 { Pageable p ->
                     p.pageNumber == 0 &&
                             p.pageSize == max &&
-                            p.sort == Sort.by("appliedDate").ascending()
+                            p.sort == Sort.by("id").descending()
                 }
         ) >> pageable
         [leaveApplication1, leaveApplication2] == response.getContent()
@@ -257,7 +257,7 @@ class LeaveApplicationServiceSpec extends Specification{
                 { Pageable p ->
                     p.pageNumber == 0 &&
                             p.pageSize == max &&
-                            p.sort == Sort.by("appliedDate").ascending()
+                            p.sort == Sort.by("id").descending()
                 }
         ) >> pageable
         [leaveApplication1, leaveApplication2] == response.getContent()
@@ -283,7 +283,7 @@ class LeaveApplicationServiceSpec extends Specification{
                 { Pageable p ->
                     p.pageNumber == 0 &&
                             p.pageSize == max &&
-                            p.sort == Sort.by("appliedDate").ascending()
+                            p.sort == Sort.by("id").descending()
                 }
         ) >> pageable
         [leaveApplication3, leaveApplication4] == response.getContent()
@@ -309,7 +309,7 @@ class LeaveApplicationServiceSpec extends Specification{
                 { Pageable p ->
                     p.pageNumber == 0 &&
                             p.pageSize == max &&
-                            p.sort == Sort.by("appliedDate").ascending()
+                            p.sort == Sort.by("id").descending()
                 }
         ) >> pageable
         [leaveApplication1, leaveApplication2] == response.getContent()
@@ -331,7 +331,7 @@ class LeaveApplicationServiceSpec extends Specification{
         1 * leaveApplicationRepository.findByStatusNot(
                 status,
                 { Pageable p ->
-                    p.pageNumber == 0 && p.pageSize == max
+                    p.pageNumber == 0 && p.pageSize == max && p.sort == Sort.by("id").descending()
                 }
         ) >> pageable
         [leaveApplication3, leaveApplication4] == response.getContent()

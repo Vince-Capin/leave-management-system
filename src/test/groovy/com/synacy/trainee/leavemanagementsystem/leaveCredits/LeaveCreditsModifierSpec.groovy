@@ -14,20 +14,55 @@ class LeaveCreditsModifierSpec extends Specification {
         leaveCreditsModifier = new LeaveCreditsModifier(leaveCreditsRepository)
     }
 
-    def "modifyLeaveCredits() should decrease leave credits and save when status is APPROVED"() {
+    def "modifyLeaveCredits() should decrease leave credits and save when status is PENDING"() {
         given:
         LeaveApplication leaveApplication = Mock(LeaveApplication)
         LeaveCredits leaveCredits = Mock(LeaveCredits)
-        def numberOfDays = 5
+        LeaveStatus status = LeaveStatus.PENDING
 
+        int numberOfDays = 5
         leaveApplication.getNumberOfDays() >> numberOfDays
 
         when:
-        leaveCreditsModifier.modifyLeaveCredits(leaveApplication, LeaveStatus.APPROVED, leaveCredits)
+        leaveCreditsModifier.modifyLeaveCredits(leaveApplication, status, leaveCredits)
 
         then:
         1 * leaveCredits.decreaseCredits(numberOfDays)
-        1 * leaveCreditsRepository.save(leaveCredits)
+        1 * leaveCreditsRepository.save(_ as LeaveCredits)
+    }
+
+    def "modifyLeaveCredits() should decrease leave credits and save when status is REJECTED"() {
+        given:
+        LeaveApplication leaveApplication = Mock(LeaveApplication)
+        LeaveCredits leaveCredits = Mock(LeaveCredits)
+        LeaveStatus status = LeaveStatus.REJECTED
+
+        int numberOfDays = 5
+        leaveApplication.getNumberOfDays() >> numberOfDays
+
+        when:
+        leaveCreditsModifier.modifyLeaveCredits(leaveApplication, status, leaveCredits)
+
+        then:
+        1 * leaveCredits.increaseCredits(numberOfDays)
+        1 * leaveCreditsRepository.save(_ as LeaveCredits)
+    }
+
+    def "modifyLeaveCredits() should decrease leave credits and save when status is CANCELLED"() {
+        given:
+        LeaveApplication leaveApplication = Mock(LeaveApplication)
+        LeaveCredits leaveCredits = Mock(LeaveCredits)
+        LeaveStatus status = LeaveStatus.CANCELLED
+
+        int numberOfDays = 5
+        leaveApplication.getNumberOfDays() >> numberOfDays
+
+        when:
+        leaveCreditsModifier.modifyLeaveCredits(leaveApplication, status, leaveCredits)
+
+        then:
+        1 * leaveCredits.increaseCredits(numberOfDays)
+        1 * leaveCreditsRepository.save(_ as LeaveCredits)
     }
 
 }

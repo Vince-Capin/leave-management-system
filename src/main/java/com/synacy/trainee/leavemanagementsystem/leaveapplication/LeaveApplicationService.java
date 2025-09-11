@@ -87,33 +87,33 @@ public class LeaveApplicationService {
     }
 
     public Page<LeaveApplication> getLeaveApplicationsByUserId(Long userId, int page, int max) {
-        Pageable pageable = PageRequest.of(page - 1, max).withSort(Sort.by(Sort.Direction.ASC, "appliedDate"));
+        Pageable pageable = PageRequest.of(page - 1, max).withSort(Sort.by(Sort.Direction.DESC, "id"));
 
         return leaveApplicationRepository.findByApplicant_Id(userId, pageable);
     }
 
     public Page<LeaveApplication> getLeaveApplicationsByManagerIdAndStatus(Long managerId, LeaveStatus status, int page, int max) {
-        Pageable pageable = PageRequest.of(page - 1, max).withSort(Sort.by(Sort.Direction.ASC, "appliedDate"));
+        Pageable pageable = PageRequest.of(page - 1, max).withSort(Sort.by(Sort.Direction.DESC, "id"));
 
         return leaveApplicationRepository.findLeaveApplicationByManager_IdAndStatus(managerId, status, pageable);
     }
 
     public Page<LeaveApplication> fetchLeaveApplicationsByManagerIdAndStatusNot(Long managerId, LeaveStatus status, int page, int max) {
-        Pageable pageable = PageRequest.of(page - 1, max).withSort(Sort.by(Sort.Direction.ASC, "appliedDate"));
+        Pageable pageable = PageRequest.of(page - 1, max).withSort(Sort.by(Sort.Direction.DESC, "id"));
 
         return leaveApplicationRepository.findByManager_IdAndStatusNot(managerId, status, pageable);
     }
 
     public Page<LeaveApplication> fetchLeaveApplicationsByStatus(LeaveStatus status, int page, int max) {
 
-        Pageable pageable = PageRequest.of(page - 1, max).withSort(Sort.by(Sort.Direction.ASC, "appliedDate"));
+        Pageable pageable = PageRequest.of(page - 1, max).withSort(Sort.by(Sort.Direction.DESC, "id"));
 
         return leaveApplicationRepository.findLeaveApplicationByStatus(status, pageable);
     }
 
     public Page<LeaveApplication> getLeaveApplicationsByStatusNot(LeaveStatus status, int page, int max) {
 
-        Pageable pageable = PageRequest.of(page - 1, max);
+        Pageable pageable = PageRequest.of(page - 1, max).withSort(Sort.by(Sort.Direction.DESC, "id"));
 
         return leaveApplicationRepository.findByStatusNot(status, pageable);
     }
