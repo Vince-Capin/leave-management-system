@@ -27,6 +27,10 @@ public class LeaveApplication {
     @JoinColumn(name = "manager_id")
     private User manager;
 
+    @ManyToOne
+    @JoinColumn(name = "approver_id")
+    private User approver;
+
     @Column(nullable = false)
     private LocalDate startDate;
     @Column(nullable = false)
