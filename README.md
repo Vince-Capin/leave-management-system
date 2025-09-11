@@ -48,7 +48,7 @@ Spring datasource and JPA settings.
 spring.application.name=leave-management-system
 spring.datasource.url=jdbc:postgresql://localhost:5432/leave_management
 spring.datasource.username=postgres
-spring.datasource.password=root
+spring.datasource.password=root   # Change this to your own PostgreSQL password
 spring.jpa.show-sql=true
 
 # Hibernate ddl auto (create, create-drop, validate, update)
