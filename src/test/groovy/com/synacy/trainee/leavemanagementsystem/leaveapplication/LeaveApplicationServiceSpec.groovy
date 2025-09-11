@@ -69,6 +69,7 @@ class LeaveApplicationServiceSpec extends Specification{
                 id: 1L,
                 applicant: employee1,
                 manager: manager,
+                approver: manager,
                 startDate: startDate,
                 endDate: endDate,
                 appliedDate: appliedDate,
@@ -79,6 +80,7 @@ class LeaveApplicationServiceSpec extends Specification{
                 id: 2L,
                 applicant: employee2,
                 manager: manager,
+                approver: manager,
                 startDate: startDate,
                 endDate: endDate,
                 appliedDate: appliedDate,
@@ -89,6 +91,7 @@ class LeaveApplicationServiceSpec extends Specification{
                 id: 3L,
                 applicant: employee1,
                 manager: manager,
+                approver: manager,
                 startDate: startDate,
                 endDate: endDate,
                 appliedDate: appliedDate,
@@ -99,6 +102,7 @@ class LeaveApplicationServiceSpec extends Specification{
                 id: 4L,
                 applicant: employee2,
                 manager: manager,
+                approver: manager,
                 startDate: startDate,
                 endDate: endDate,
                 appliedDate: appliedDate,
@@ -162,6 +166,7 @@ class LeaveApplicationServiceSpec extends Specification{
     def "updateLeaveStatus should be able to update the leave status" () {
         given:
         Long leaveId = 1L
+        Long approverId = leaveApplication1.approver.id
         LeaveStatus newStatus = LeaveStatus.APPROVED
 
         def credits = new LeaveCredits(
@@ -173,10 +178,11 @@ class LeaveApplicationServiceSpec extends Specification{
         employee1.leaveCredits = credits
 
         when:
-        def response = leaveApplicationService.updateLeaveStatus(leaveId, newStatus)
+        def response = leaveApplicationService.updateLeaveStatus(leaveId, approverId, newStatus)
 
         then:
         1 * leaveApplicationRepository.findById(leaveId) >> Optional.of(leaveApplication1)
+        1 * userRepository.findById(approverId) >> Optional.of(manager)
         1 * leaveCreditsModifier.modifyLeaveCredits(leaveApplication1, newStatus, credits)
         1 * leaveApplicationRepository.save(leaveApplication1) >> leaveApplication1
         leaveApplication1.status == response.status
@@ -185,10 +191,11 @@ class LeaveApplicationServiceSpec extends Specification{
     def "updateLeaveStatus should throw a error when leave application is not found!" () {
         given:
         Long leaveId = 1L
+        Long approverId = leaveApplication1.approver.id
         LeaveStatus newStatus = LeaveStatus.APPROVED
 
         when:
-        leaveApplicationService.updateLeaveStatus(leaveId, newStatus)
+        leaveApplicationService.updateLeaveStatus(leaveId, approverId,newStatus)
 
         then:
         1 * leaveApplicationRepository.findById(leaveId) >> Optional.empty()

@@ -52,6 +52,7 @@ class LeaveApplicationControllerSpec extends Specification {
                 id: 1L,
                 applicant: employee1,
                 manager: manager,
+                approver: manager,
                 startDate: startDate,
                 endDate: endDate,
                 appliedDate: appliedDate,
@@ -62,6 +63,7 @@ class LeaveApplicationControllerSpec extends Specification {
                 id: 2L,
                 applicant: employee2,
                 manager: manager,
+                approver: manager,
                 startDate: startDate,
                 endDate: endDate,
                 appliedDate: appliedDate,
@@ -72,6 +74,7 @@ class LeaveApplicationControllerSpec extends Specification {
                 id: 3L,
                 applicant: employee1,
                 manager: manager,
+                approver: manager,
                 startDate: startDate,
                 endDate: endDate,
                 appliedDate: appliedDate,
@@ -278,14 +281,15 @@ class LeaveApplicationControllerSpec extends Specification {
     def "updateLeaveApplicationStatus should be able to update the status of the leave application"() {
         given:
         Long id = 3L
+        Long approverId = leaveApplication1.approver.id
         LeaveStatus newStatus = LeaveStatus.APPROVED
         leaveApplication1.status = newStatus
 
         when:
-        LeaveResponse updatedLeave = leaveApplicationController.updateLeaveApplicationStatus(id, newStatus)
+        LeaveResponse updatedLeave = leaveApplicationController.updateLeaveApplicationStatus(id, approverId, newStatus)
 
         then:
-        1 * leaveApplicationService.updateLeaveStatus(id, newStatus) >> leaveApplication1
+        1 * leaveApplicationService.updateLeaveStatus(id, approverId, newStatus) >> leaveApplication1
         newStatus == updatedLeave.status
     }
 

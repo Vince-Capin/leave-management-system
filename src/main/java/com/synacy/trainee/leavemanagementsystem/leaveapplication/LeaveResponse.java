@@ -15,6 +15,7 @@ public class LeaveResponse {
     private final String reason;
     private final LeaveStatus status;
     private final String manager;
+    private final String approver;
 
     public LeaveResponse(LeaveApplication leaveApplication) {
         this.id = leaveApplication.getId();
@@ -26,6 +27,7 @@ public class LeaveResponse {
         this.reason = leaveApplication.getReason();
         this.status = leaveApplication.getStatus();
         this.manager = leaveApplication.getManager() != null ? leaveApplication.getManager().getName() : null;
+        this.approver = leaveApplication.getApprover() != null ? leaveApplication.getApprover().getName() : null;
     }
 }
 
