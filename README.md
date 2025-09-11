@@ -19,7 +19,7 @@ A simple leave management web app where:
 
 ## Prerequisites
 - [Install JDK 21](https://docs.oracle.com/en/java/javase/21/install/index.html)
-- [Install Node.js 18](https://nodejs.org/en/download/) and [Angular CLI](https://angular.dev/tools/cli/setup-local) for the frontend
+- [Install Node.js 18+](https://nodejs.org/en/download/) and [Angular CLI](https://angular.dev/tools/cli/setup-local) for the frontend
 - [Install PostgreSQL 17](https://www.tigerdata.com/blog/how-to-install-psql-on-mac-ubuntu-debian-windows)
 - [Install Gradle](https://gradle.org/install/)
 
