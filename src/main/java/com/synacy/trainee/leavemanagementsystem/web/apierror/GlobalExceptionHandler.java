@@ -1,6 +1,7 @@
 package com.synacy.trainee.leavemanagementsystem.web.apierror;
 
 import com.synacy.trainee.leavemanagementsystem.leaveCredits.LeaveCreditsNotFoundException;
+import com.synacy.trainee.leavemanagementsystem.leaveapplication.LeaveDatesOverlapException;
 import com.synacy.trainee.leavemanagementsystem.user.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,6 +27,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidOperationException.class)
     public ApiErrorResponse handleInvalidOperationException(InvalidOperationException e) {
         return new ApiErrorResponse(e.getErrorCode(), e.getErrorMessage());
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(LeaveDatesOverlapException.class)
+    public ApiErrorResponse handleLeaveDatesOverlapException(LeaveDatesOverlapException e) {
+        return new ApiErrorResponse("LEAVE_DATES_OVERLAP", e.getMessage());
     }
 
 }
