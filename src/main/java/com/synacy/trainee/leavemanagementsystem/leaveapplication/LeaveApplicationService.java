@@ -38,6 +38,10 @@ public class LeaveApplicationService {
 
     @Transactional
     public LeaveApplication createLeaveApplication(LeaveRequest leaveRequest) {
+        if(overlapWithExistingLeaveApplicationRequest(leaveRequest)) {
+            throw new LeaveDatesOverlapException("Leave Application already exists");
+        }
+
         User user = userRepository.findById(leaveRequest.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + leaveRequest.getUserId()));
 
@@ -129,6 +133,17 @@ public class LeaveApplicationService {
 
     public void setManagerToNull(List<LeaveApplication> leaveApplications) {
         leaveApplicationRepository.saveAll(leaveApplications);
+    }
+
+    public boolean overlapWithExistingLeaveApplicationRequest(LeaveRequest leaveRequest) {
+        List<LeaveStatus> blocking = List.of(LeaveStatus.PENDING, LeaveStatus.APPROVED);
+
+        return leaveApplicationRepository.existsOverlapping(
+                leaveRequest.getUserId(),
+                leaveRequest.getStartDate(),
+                leaveRequest.getEndDate(),
+                blocking
+        );
     }
 }
 
