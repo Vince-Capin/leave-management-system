@@ -68,7 +68,7 @@ chmod +x ./gradlew
   - `GET /api/v1/user/paginated` \- get all paginated list of users
   - `GET /api/v1/user` \- get all list of users
   - `GET /api/v1/user` \- get all list of users
-  - `POST /api/v1/user/{id}` \- get user by id
+  - `POST /api/v1/user` \- create user
     - Body: `name`, `role`, `leaveCredits`, `managerId`
   - `PUT /api/v1/user/{id}` \- update user
   - `GET /api/v1/user/managers` \- get all managers
