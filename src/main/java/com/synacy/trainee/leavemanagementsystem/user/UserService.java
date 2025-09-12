@@ -7,6 +7,7 @@ import com.synacy.trainee.leavemanagementsystem.leaveapplication.LeaveApplicatio
 import com.synacy.trainee.leavemanagementsystem.leaveapplication.LeaveApplicationService;
 import com.synacy.trainee.leavemanagementsystem.leaveapplication.LeaveStatus;
 import com.synacy.trainee.leavemanagementsystem.web.apierror.InvalidOperationException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -41,6 +42,7 @@ public class UserService {
         return userRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
 
+    @Transactional
     public User createUser(UserRequestDTO userRequest) {
         if (checkForSameUserName(userRequest.name(), null)) {
             throw new InvalidOperationException(
@@ -59,7 +61,8 @@ public class UserService {
         return savedUser;
     }
 
-    private User saveUser(UserRequestDTO userRequest, User user) {
+    @Transactional
+    public User saveUser(UserRequestDTO userRequest, User user) {
         user.setName(userRequest.name());
         user.setRole(userRequest.role());
 
@@ -82,6 +85,7 @@ public class UserService {
 
     }
 
+    @Transactional
     public User updateUser(Long id, UserRequestDTO userRequest) {
         if (checkForSameUserName(userRequest.name(), id)) {
             throw new InvalidOperationException(

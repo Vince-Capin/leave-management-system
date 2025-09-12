@@ -14,7 +14,7 @@ import spock.lang.Specification
 import org.springframework.data.domain.Page
 import java.time.LocalDate
 
-class LeaveApplicationServiceSpec extends Specification{
+class LeaveApplicationServiceSpec extends Specification {
 
     LeaveApplicationRepository leaveApplicationRepository
     LeaveApplicationService leaveApplicationService
@@ -34,7 +34,7 @@ class LeaveApplicationServiceSpec extends Specification{
     LeaveStatus initialStatus
 
 
-    def setup () {
+    def setup() {
         leaveApplicationRepository = Mock(LeaveApplicationRepository)
         userRepository = Mock(UserRepository)
         leaveCreditsModifier = Mock(LeaveCreditsModifier)
@@ -75,7 +75,7 @@ class LeaveApplicationServiceSpec extends Specification{
                 appliedDate: appliedDate,
                 numberOfDays: numberOfDays,
                 reason: reason,
-                status: initialStatus )
+                status: initialStatus)
         leaveApplication2 = new LeaveApplication(
                 id: 2L,
                 applicant: employee2,
@@ -86,7 +86,7 @@ class LeaveApplicationServiceSpec extends Specification{
                 appliedDate: appliedDate,
                 numberOfDays: numberOfDays,
                 reason: reason,
-                status: initialStatus )
+                status: initialStatus)
         leaveApplication3 = new LeaveApplication(
                 id: 3L,
                 applicant: employee1,
@@ -97,7 +97,7 @@ class LeaveApplicationServiceSpec extends Specification{
                 appliedDate: appliedDate,
                 numberOfDays: numberOfDays,
                 reason: reason,
-                status: LeaveStatus.APPROVED )
+                status: LeaveStatus.APPROVED)
         leaveApplication4 = new LeaveApplication(
                 id: 4L,
                 applicant: employee2,
@@ -108,7 +108,7 @@ class LeaveApplicationServiceSpec extends Specification{
                 appliedDate: appliedDate,
                 numberOfDays: numberOfDays,
                 reason: reason,
-                status: LeaveStatus.APPROVED )
+                status: LeaveStatus.APPROVED)
     }
 
     def "createLeaveApplication should create a leave application when user has enough credits"() {
@@ -138,7 +138,9 @@ class LeaveApplicationServiceSpec extends Specification{
         initialStatus == response.status
     }
 
-    def "createLeaveApplication should throw a error when user does not exist" () {
+
+
+    def "createLeaveApplication should throw a error when user does not exist"() {
         given:
         userRepository.findById(employee1.id) >> Optional.empty()
 
@@ -148,8 +150,21 @@ class LeaveApplicationServiceSpec extends Specification{
         then:
         thrown(UserNotFoundException)
     }
+    
+    def "createLeaveApplication should throw error when leave dates overlap with existing application"() {
+        given:
+        def blocking = List.of(LeaveStatus.PENDING, LeaveStatus.APPROVED)
+        leaveApplicationRepository.existsOverlapping(employee1.id, leaveRequest.startDate, leaveRequest.endDate, blocking) >> true
 
-    def "createLeaveApplication should throw a error when number of days applied is greater than remaining leave credits" () {
+        when:
+        leaveApplicationService.createLeaveApplication(leaveRequest)
+
+        then:
+        thrown(LeaveDatesOverlapException)
+    }
+
+
+    def "createLeaveApplication should throw a error when number of days applied is greater than remaining leave credits"() {
         given:
         leaveRequest.numberOfDays = 5
         LeaveCredits leaveCredits = new LeaveCredits(remainingLeaveCredits: 3)
@@ -163,7 +178,7 @@ class LeaveApplicationServiceSpec extends Specification{
         thrown(InsufficientLeaveCreditsException)
     }
 
-    def "updateLeaveStatus should be able to update the leave status" () {
+    def "updateLeaveStatus should be able to update the leave status"() {
         given:
         Long leaveId = 1L
         Long approverId = leaveApplication1.approver.id
@@ -188,21 +203,21 @@ class LeaveApplicationServiceSpec extends Specification{
         leaveApplication1.status == response.status
     }
 
-    def "updateLeaveStatus should throw a error when leave application is not found!" () {
+    def "updateLeaveStatus should throw a error when leave application is not found!"() {
         given:
         Long leaveId = 1L
         Long approverId = leaveApplication1.approver.id
         LeaveStatus newStatus = LeaveStatus.APPROVED
 
         when:
-        leaveApplicationService.updateLeaveStatus(leaveId, approverId,newStatus)
+        leaveApplicationService.updateLeaveStatus(leaveId, approverId, newStatus)
 
         then:
         1 * leaveApplicationRepository.findById(leaveId) >> Optional.empty()
         thrown(IllegalArgumentException)
     }
 
-    def "fetchAllLeaveApplications should return all of leave applications" () {
+    def "fetchAllLeaveApplications should return all of leave applications"() {
         when:
         def response = leaveApplicationService.fetchAllLeaveApplications()
 
@@ -219,7 +234,7 @@ class LeaveApplicationServiceSpec extends Specification{
         [leaveApplication1.manager.name, leaveApplication2.manager.name] == response*.manager
     }
 
-    def "getLeaveApplicationsByUserId should return all leave application by the user" (){
+    def "getLeaveApplicationsByUserId should return all leave application by the user"() {
         given:
         Long userId = employee1.id
         int page = 1
@@ -244,7 +259,7 @@ class LeaveApplicationServiceSpec extends Specification{
         [leaveApplication1, leaveApplication2] == response.getContent()
     }
 
-    def "getLeaveApplicationsByManagerIdAndStatus should return a paginated list of leave applications by manager and a pending status" () {
+    def "getLeaveApplicationsByManagerIdAndStatus should return a paginated list of leave applications by manager and a pending status"() {
         given:
         Long managerId = 1L
         LeaveStatus status = LeaveStatus.PENDING
@@ -270,7 +285,7 @@ class LeaveApplicationServiceSpec extends Specification{
         [leaveApplication1, leaveApplication2] == response.getContent()
     }
 
-    def "fetchLeaveApplicationsByManagerIdAndStatusNot should return a paginated list of leave applications by manager and NOT the status given" () {
+    def "fetchLeaveApplicationsByManagerIdAndStatusNot should return a paginated list of leave applications by manager and NOT the status given"() {
         given:
         Long managerId = 1L
         LeaveStatus status = LeaveStatus.PENDING
@@ -298,7 +313,7 @@ class LeaveApplicationServiceSpec extends Specification{
 
     }
 
-    def "fetchLeaveApplicationsByStatus should return a paginated list of leave application by status" (){
+    def "fetchLeaveApplicationsByStatus should return a paginated list of leave application by status"() {
         given:
         LeaveStatus status = LeaveStatus.PENDING
         int page = 1
@@ -322,7 +337,7 @@ class LeaveApplicationServiceSpec extends Specification{
         [leaveApplication1, leaveApplication2] == response.getContent()
     }
 
-    def "getLeaveApplicationsByStatusNot should return a paginated list of leave applications but not with the status given" () {
+    def "getLeaveApplicationsByStatusNot should return a paginated list of leave applications but not with the status given"() {
         given:
         LeaveStatus status = LeaveStatus.PENDING
         int page = 1
@@ -346,7 +361,7 @@ class LeaveApplicationServiceSpec extends Specification{
     }
 
 
-    def "getActiveLeaveApplicationsByManagerId should return a list of active(pending) leave applications by manager" (){
+    def "getActiveLeaveApplicationsByManagerId should return a list of active(pending) leave applications by manager"() {
         given:
         Long managerId = manager.id
         LeaveStatus status = LeaveStatus.PENDING
@@ -359,7 +374,7 @@ class LeaveApplicationServiceSpec extends Specification{
         [leaveApplication1, leaveApplication2] == response
     }
 
-    def "setManagerToNull should be able to null the managers of employee" () {
+    def "setManagerToNull should be able to null the managers of employee"() {
         given:
         List<LeaveApplication> leaveApplications = [leaveApplication1, leaveApplication2]
 
@@ -367,6 +382,34 @@ class LeaveApplicationServiceSpec extends Specification{
         leaveApplicationService.setManagerToNull(leaveApplications)
 
         then:
-        1 * leaveApplicationRepository.saveAll {leaveApplications}
+        1 * leaveApplicationRepository.saveAll { leaveApplications }
+    }
+
+    def "overlapWithExistingLeaveApplicationRequest should return true if there is an overlap in the dates"() {
+        given:
+        LeaveRequest newLeaveRequest = new LeaveRequest(userId: employee1.id, startDate: LocalDate.parse("2025-09-02"), endDate: LocalDate.parse("2025-09-03"))
+        List<LeaveStatus> blockingStatus = [LeaveStatus.PENDING, LeaveStatus.APPROVED]
+
+        1 * leaveApplicationRepository.existsOverlapping(newLeaveRequest.userId, newLeaveRequest.startDate, newLeaveRequest.endDate, blockingStatus) >> true
+
+        when:
+        def result = leaveApplicationService.overlapWithExistingLeaveApplicationRequest(newLeaveRequest)
+
+        then:
+        result
+    }
+
+    def "overlapWithExistingLeaveApplicationRequest should return false if there is no overlaping dates"() {
+        given:
+        LeaveRequest newLeaveRequest = new LeaveRequest(userId: employee1.id, startDate: LocalDate.parse("2025-09-02"), endDate: LocalDate.parse("2025-09-03"))
+        List<LeaveStatus> blockingStatus = [LeaveStatus.PENDING, LeaveStatus.APPROVED]
+
+        1 * leaveApplicationRepository.existsOverlapping(newLeaveRequest.userId, newLeaveRequest.startDate, newLeaveRequest.endDate, blockingStatus) >> false
+
+        when:
+        def result = leaveApplicationService.overlapWithExistingLeaveApplicationRequest(newLeaveRequest)
+
+        then:
+        !result
     }
 }
